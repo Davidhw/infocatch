@@ -8,7 +8,7 @@ import os
 from models import Subscription
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # Create your views here.
-
+'''
 def console_debug(f):
     def x(*args, **kw):
         try:
@@ -22,7 +22,7 @@ def console_debug(f):
         else:
             return ret
         return x
-
+'''
 def save(request):
 #    body = simplejson.loads(request.body)
     body = json.loads(request.body)
@@ -40,7 +40,18 @@ def save(request):
     return HttpResponseRedirect('/subscribe/')
 
 def load_external_page(request,url):
-    print >>sys.stderr, url
+
+    def addHttp(url):
+        http = "http://"
+        if url[:7]==http:
+                pass
+        elif url[:8] == "https://":
+                url = http+url[8:]
+        else:
+                url = http+url
+        return url
+    
+    url = addHttp(url)
     html = urllib2.urlopen(url).read()
     split = html.split("</head>")
     if len(split)==2:
