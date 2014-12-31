@@ -1,2 +1,2 @@
-web: gunicorn tuts.wsgi
+web: gunicorn rssplus.wsgi
 
