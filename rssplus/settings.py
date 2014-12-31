@@ -43,7 +43,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'subscribe',
-    'django_extensions',
+#    'django_extensions',
 #    'werkzeug',
 )
 
