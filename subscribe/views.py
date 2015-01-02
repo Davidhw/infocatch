@@ -1,11 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.shortcuts import redirect
+from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 import json
 import urllib2
 import sys
 import os
 from models import Subscription
+from rssplus.views import home
+
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # Create your views here.
 '''
@@ -37,7 +41,19 @@ def save(request):
     subscription.url = url
     subscription.xpath = xpath
     subscription.save()
-    return HttpResponseRedirect('/subscribe/')
+#    return load_external_page(request,url)
+#    return redirect("http://127.0.0.1:8000/", permanent=True)
+#    return HttpResponseRedirect(reverse('rssplus:home'))
+#    return HttpResponseRedirect("127.0.0.1:8000")
+    from rssplus.forms import URLForm
+    form = URLForm()
+    return render('home-view.html',{"subscriptionsString":Subscription.getStringOfAll(),"urlForm":form})
+
+
+def load_external_page_site_not_specified_in_URL(request):
+    from rssplus.forms import URLForm
+    url = URLForm(request.POST).data["siteUrl"]
+    return load_external_page(request,url)
 
 def load_external_page(request,url):
 
@@ -68,7 +84,7 @@ def load_external_page(request,url):
 #    with open("RSSlog.txt",'w') as log:
 #        log.write("writing html of"+url)
 #        log.write(url)
-    return render(request,'subscribe-view.html',{'html1':html1,'html2':html2,'url':url})
+    return render(request,'subscribe-view.html',{'html1':html1+"Click on the content you want. The service will highlight what it thinks you want. Deselect the content you do not want or make the selection criteria more general by hitting the up arrow on your keyboard. Subscribe to the highlighted content by hitting the right arrow.",'html2':html2,'url':url})
 
 
 

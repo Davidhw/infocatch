@@ -1,1 +1,1 @@
-[(u'url', u'http://sarasota.craigslist.org/search/moa'), (u'xpath', u'/html[1]/body[1]/article[1]/div[2]/div[1]/div[2]/*/*/span[2]/a[1]'), (u'data', u'blarg')]in save
+[(u'url', u'http://reddit.com'), (u'xpath', u'/html[1]/body[1]/div[3]/div[4]/div[1]/*/*/p[1]/a[1]'), (u'data', u'blarg')]in save
