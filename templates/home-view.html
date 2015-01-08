@@ -1,13 +1,20 @@
-<html>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
 Welcome to InfoCatch, a service that, once a day, sends you an offline-viewable collection of the web content you've expressed interest in. 
 
 To begin, enter a url into the box below.
+
 
 <form action="/subscribe/" method="post">
     {% csrf_token %}
     {{ urlForm }}
 </form>
+
+<br>
+This site is still being developed. As such, rather than delivering content, it just prints websites and the selected content's xpaths below. It also does not yet have a notion of multiple different users.
 {{subscriptionsString|safe}}
-</body>
-</html>
+
+
+
+{% endblock %}

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+{% csrf_token %}
+
+<html lang="en">
+<head>
+    <title>{% block title %}Delivering Content Daily %}</title>
+</head>
+
+<body>
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
