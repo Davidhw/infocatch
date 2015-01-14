@@ -23,14 +23,14 @@ TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY WARNING: keep the secrte key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = [".herokuapp.com",]
+ALLOWED_HOSTS = [".herokuapp.com","test1.com"]
 
 
 # Application definition
@@ -43,8 +43,37 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'subscribe',
+    'social.apps.django_app.default',
 #    'django_extensions',
 #    'werkzeug',
+)
+
+# Added for social login
+SOCIAL_AUTH_FACEBOOK_KEY =os.environ.get('SOCIAL_AUTH_FACEBOOK_KEY')
+SOCIAL_AUTH_FACEBOOK_SECRET =os.environ.get('SOCIAL_AUTH_FACEBOOK_SECRET')
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY =os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET =os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+SOCIAL_AUTH_TWITTER_KEY =os.environ.get('SOCIAL_AUTH_TWITTER_KEY')
+SOCIAL_AUTH_TWITTER_SECRET =os.environ.get('SOCIAL_AUTH_TWITTER_SECRET')
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
+TEMPLATE_CONTEXT_PROCESSORS = (
+   'django.contrib.auth.context_processors.auth',
+   'django.core.context_processors.debug',
+   'django.core.context_processors.i18n',
+   'django.core.context_processors.media',
+   'django.core.context_processors.static',
+   'django.core.context_processors.tz',
+   'django.contrib.messages.context_processors.messages',
+   'social.apps.django_app.context_processors.backends',
+   'social.apps.django_app.context_processors.login_redirect',
+)
+AUTHENTICATION_BACKENDS = (
+   'social.backends.facebook.FacebookOAuth2',
+   'social.backends.google.GoogleOAuth2',
+   'social.backends.twitter.TwitterOAuth',
+   'django.contrib.auth.backends.ModelBackend',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -55,6 +84,7 @@ MIDDLEWARE_CLASSES = (
 #    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware', 
 )
 
 ROOT_URLCONF = 'rssplus.urls'

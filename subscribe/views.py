@@ -7,47 +7,37 @@ import json
 import urllib2
 import sys
 import os
-from models import Subscription
+from models import Subscription,SubscriptionUserPairing
 from rssplus.views import home
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-# Create your views here.
-'''
-def console_debug(f):
-    def x(*args, **kw):
-        try:
-            ret = f(*args, **kw)
-        except Exception, e:
-            print >> sys.stderr, "ERROR:", str(e)
-            exc_type, exc_value, tb = sys.exc_info()
-            message = "Type: %s\nValue: %s\nTraceback:\n\n%s" % (exc_type, exc_value, "\n".join(traceback.format_tb(tb)))
-            print >> sys.stderr, message
-            raise
-        else:
-            return ret
-        return x
-'''
 def save(request):
-#    body = simplejson.loads(request.body)
     body = json.loads(request.body)
 
-    with open("RSSlog.txt",'w')as log:
-        log.write(str(body.items()))
-        log.write("in save")
+    if request.user and not request.user.is_anonymous():
+        with open("RSSlog.txt",'w')as log:
+            log.write(str(body.items()))
+            log.write("in save")
 
-    url = body['url']
-    xpath = body['xpath']
-    subscription = Subscription()
-    subscription.url = url
-    subscription.xpath = xpath
-    subscription.save()
+        # if the feed doesn't exst yet, make it
+        subscription,subscriptionCreated = Subscription.objects.get_or_create(url = body['url'],xpath=body['xpath'])
+        if subscriptionCreated:
+            subscription.save()
+
+        # if the current user hasn't subscribed to that feed yet, subscribe them
+        subscriptionUserPairing,pairingCreated = SubscriptionUserPairing.objects.get_or_create(user = request.user,subscription=subscription)
+        if pairingCreated:
+            subscriptionUserPairing.save()
+
 #    return load_external_page(request,url)
 #    return redirect("http://127.0.0.1:8000/", permanent=True)
 #    return HttpResponseRedirect(reverse('rssplus:home'))
 #    return HttpResponseRedirect("127.0.0.1:8000")
     from rssplus.forms import URLForm
     form = URLForm()
-    return render('home-view.html',{"subscriptionsString":Subscription.getStringOfAll(),"urlForm":form})
+#    return render('home-view.html',{"subscriptionsString":Subscription.getStringOfAll(),"urlForm":form})
+#    return render('home-view.html',{"subscriptionsString":Subscription.getStringOfAll(),"urlForm":None})
+    return redirect('home')
 
 
 def load_external_page_site_not_specified_in_URL(request):

@@ -4,6 +4,7 @@ from django.conf import settings
 
 urlpatterns = patterns('',
     # social login stuff
+     url(r'^logout$
      url('', include('social.apps.django_app.urls', namespace='social')),
      url('', include('django.contrib.auth.urls', namespace='auth')),
      
