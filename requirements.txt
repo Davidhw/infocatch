@@ -98,7 +98,6 @@ python-apt==0.8.9.1ubuntu1
 python-dateutil==1.5
 python-debian==0.1.21-nmu2ubuntu1
 python-openid==2.2.5
-python-social-auth==0.2.1
 pytz==2014.10
 pyxdg==0.25
 reportlab==2.6
@@ -128,3 +127,4 @@ wadllib==1.3.2
 wsgiref==0.1.2
 xdiagnose==3.6.1
 zope.interface==4.0.5
+python-social-auth==0.2.1
