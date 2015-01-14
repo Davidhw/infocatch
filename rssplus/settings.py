@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 
 STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 STATICFILES_DIRS = (
@@ -118,7 +120,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-
+# https://devcenter.heroku.com/articles/django-assets
+STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
 
 '''
