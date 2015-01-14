@@ -26,7 +26,7 @@ TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 # SECURITY WARNING: keep the secrte key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -84,7 +84,7 @@ MIDDLEWARE_CLASSES = (
 #    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware', 
+#    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware', 
 )
 
 ROOT_URLCONF = 'rssplus.urls'
