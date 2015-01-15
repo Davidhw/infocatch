@@ -43,8 +43,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'subscribe',
     'social.apps.django_app.default',
-    'django_extensions',
-    'werkzeug',
+#    'django_extensions',
+#    'werkzeug',
 )
 
 # Added for social login

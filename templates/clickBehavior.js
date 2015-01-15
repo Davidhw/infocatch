@@ -6,8 +6,9 @@ var initialChoice;
 var similarElements = [];
 var YELLOW = "#FDFF47";
 var GREEN = "#BDFF44";
-var UPARROW = 38
-var DOWNARROW = 40
+var UPARROW = 38;
+var DOWNARROW = 40;
+var RIGHTARROW = 39;
 var broadenBy = 2;
 var lastScrollLevel = 0;
 
@@ -210,7 +211,10 @@ clickBehavior = function(){
     //this.style.backgroundColor = "#FDFF47";
     //var similarElements = [].slice.call(this.parentNode.childNodes);
 	    initialChoiceXpath = getElementTreeXPath(this);
+	    console.log("csrf token is :");
+	    console.log(CSRF_TOKEN);
 	    console.log("Initial choice xpath: ", initialChoiceXpath);
+	    console.log("testtesttest");
     //var similarElements = getParent(initialChoiceXpath);
 	    console.log(getElementTreeXPath(this));
 	    similarElementsXpath = broadenXPath(getElementTreeXPath(this),broadenBy);
@@ -286,7 +290,7 @@ window.addEventListener("keydown", function(e) {
     console.log(e.keyCode);
     console.log(initialChoiceMade);
     // space and arrow keys
-    if(initialChoiceMade && [38, 40].indexOf(e.keyCode) > -1) {
+    if(initialChoiceMade && [39,38, 40].indexOf(e.keyCode) > -1) {
         e.preventDefault();
         if (e.keyCode==UPARROW){
             console.log("up");
@@ -294,6 +298,22 @@ window.addEventListener("keydown", function(e) {
         } else if (e.keyCode == DOWNARROW){
             console.log("down");
             broadenSimilarNodes(-1)
-        }
+        } else if (e.keyCode == RIGHTARROW){
+	    console.log("right");
+            var http = new XMLHttpRequest();
+            var url = "/subscribe/save";
+	    http.open("POST",url,true);
+            http.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
+
+            var parameters = {
+               "url": "{{url}}",
+               "xpath": similarElementsXpath,
+               "data":"blarg"
+            };
+            console.log(JSON.stringify(parameters));
+	    http.send(JSON.stringify(parameters))
+        
+	}
     }
 }, false);
+

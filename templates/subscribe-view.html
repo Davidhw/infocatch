@@ -1,7 +1,12 @@
 {{html1|safe}}
-
+{{ csrf_token }}
+<!-- https://media.readthedocs.org/pdf/whitenoise/latest/whitenoise.pdf -->
 {% load static from staticfiles%}
 
+<script>
+var CSRF_TOKEN = '{{csrf_token}}';
+var URL = '{{url}}';
+</script>
 <script src="{% static 'js/clickBehavior.js' %}"> </script>
 
 

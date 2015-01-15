@@ -300,10 +300,10 @@ window.addEventListener("keydown", function(e) {
             var http = new XMLHttpRequest();
             var url = "/subscribe/save";
 	    http.open("POST",url,true);
-            http.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
+            http.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
 
             var parameters = {
-               "url": "{{url}}",
+               "url": URL,
                "xpath": similarElementsXpath,
                "data":"blarg"
             };

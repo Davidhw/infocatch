@@ -1,1 +1,1 @@
-[(u'url', u'http://sarasota.craigslist.org/search/mob?postedToday=1'), (u'xpath', u'/html[1]/body[1]/article[1]/div[2]/div[1]/div[2]/*/*/span[2]/a[1]'), (u'data', u'blarg')]in save
+[(u'url', u'http://lesswrong.com/r/discussion/new'), (u'xpath', u'/html[1]/body[1]/div[1]/div[2]/div[1]/*/*/h2[1]/a[1]'), (u'data', u'blarg')]in save
