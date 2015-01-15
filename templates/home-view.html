@@ -8,8 +8,7 @@ Welcome to InfoCatch, a service that, once a day, sends you an offline-viewable 
 To begin, enter a url into the box below. Currently, some URLs don't work. Here are two examples of URLs that work: http://sarasota.craigslist.org/search/mob?query=galaxy+note+4 and reddit.com
 
 
-<form action="/subscribe/" method="post">
-    {% csrf_token %}
+<form action="/subscribe/" method="post">{% csrf_token %}
     {{ urlForm }}
 </form>
 

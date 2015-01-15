@@ -2,7 +2,6 @@
 
 <!DOCTYPE html>
 
-{% csrf_token %}
 <html lang="en">
  <head>
    <met charseat="utf-8">
@@ -34,8 +33,8 @@
        {% else %}
        <li>
 	 <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
-       </li>
-       <li>
+       </li> 
+      <li>
 	 <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a>
        </li>
        <li>
