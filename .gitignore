@@ -17,3 +17,5 @@
 DEADJOE
 
 media/temp
+
+staticfiles/*

@@ -11,14 +11,11 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
-STATIC_URL = '/static/'
+
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-STATICFILES_DIRS = (
-  os.path.join(BASE_DIR, 'static/'),
-)
 
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
@@ -46,8 +43,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'subscribe',
     'social.apps.django_app.default',
-#    'django_extensions',
-#    'werkzeug',
+    'django_extensions',
+    'werkzeug',
 )
 
 # Added for social login
@@ -121,7 +118,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 # https://devcenter.heroku.com/articles/django-assets
+STATICFILES_DIRS = (
+  os.path.join(BASE_DIR, 'static'),
+)
 STATIC_ROOT = 'staticfiles'
+#STATIC_URL = 'static/'
 STATIC_URL = '/static/'
 
 '''
