@@ -74,7 +74,7 @@ def load_external_page(request,url):
 #    with open("RSSlog.txt",'w') as log:
 #        log.write("writing html of"+url)
 #        log.write(url)
-    return render(request,'subscribe-view.html',{'html1':html1+"Click on the content you want. The service will highlight what it thinks you want. Deselect the content you do not want or make the selection criteria more general by hitting the up arrow on your keyboard. Subscribe to the highlighted content by hitting the right arrow.",'html2':html2,'url':url})
+    return render(request,'subscribe-view.html',{'html1':html1+"<h1> Click on the links that go to the content you want. The service will highlight what it thinks you want. Deselect the content you do not want or make the selection criteria more general by hitting the up arrow on your keyboard. Subscribe to the highlighted content by hitting the right arrow on your keyboard.</h1>",'html2':html2,'url':url})
 
 
 
