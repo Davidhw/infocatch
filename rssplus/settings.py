@@ -26,6 +26,10 @@ TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+if DEBUG:
+    BASE_URL = "test1.com"
+else:
+    BASE_URL = "https://infocatch.herokuapp.com/"
 
 TEMPLATE_DEBUG = DEBUG
 

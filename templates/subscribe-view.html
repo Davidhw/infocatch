@@ -4,6 +4,31 @@
 {% load static from staticfiles%}
 
 <script>
+var similarElementsXpath;
+subscribe = function(){
+ console.log("right");
+            var http = new XMLHttpRequest();
+            var url = "/subscribe/save";
+            http.open("POST",url,true);
+            http.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
+
+            var parameters = {
+               "url": "{{url}}",
+               "xpath": similarElementsXpath,
+               "data":"blarg"
+            };
+            console.log(JSON.stringify(parameters));
+            http.send(JSON.stringify(parameters))
+            document.location.href = '../'
+
+}
+</script>
+
+<div class="centered"> 
+<button type="button" id ="subscribeButton" class="btn btn-large btn-primary" onclick="subscribe();" disabled >Subscribe</button>
+</div>
+
+<script>
 var CSRF_TOKEN = '{{csrf_token}}';
 var URL = '{{url}}';
 </script>

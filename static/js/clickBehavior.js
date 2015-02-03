@@ -22,6 +22,7 @@ getXPathButton.onClick = function(){
  }*/
 
 clear = function(){
+    document.getElementById("subscribeButton").disabled = true;
     highLight(similarElements,"transparent");
     initialChoiceMade = false;
     initialChoiceXpath = "";
@@ -208,6 +209,10 @@ clickBehavior = function(){
 	if (initialChoiceMade === false) {
 	    initialChoice = this;
 	    initialChoiceMade = true;
+	    console.log("is the button enabled?");
+            document.getElementById("subscribeButton").disabled = false;
+	    console.log(document.getElementById("subscribeButton").disabled);
+
     //this.style.backgroundColor = "#FDFF47";
     //var similarElements = [].slice.call(this.parentNode.childNodes);
 	    initialChoiceXpath = getElementTreeXPath(this);
@@ -295,22 +300,7 @@ window.addEventListener("keydown", function(e) {
         } else if (e.keyCode == DOWNARROW){
             console.log("down");
             broadenSimilarNodes(-1)
-        } else if (e.keyCode == RIGHTARROW){
-	    console.log("right");
-            var http = new XMLHttpRequest();
-            var url = "/subscribe/save";
-	    http.open("POST",url,true);
-            http.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
-
-            var parameters = {
-               "url": URL,
-               "xpath": similarElementsXpath,
-               "data":"blarg"
-            };
-            console.log(JSON.stringify(parameters));
-	    http.send(JSON.stringify(parameters))
-	    document.location.href = '../'
-        
 	}
     }
 }, false);
+
