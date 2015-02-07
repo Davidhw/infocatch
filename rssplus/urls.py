@@ -8,6 +8,7 @@ urlpatterns = patterns('',
      url('', include('django.contrib.auth.urls', namespace='auth')),
      
      url(r'^$', 'rssplus.views.home', name='home'),
+     url(r'^wakemydyno.txt$', 'rssplus.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
