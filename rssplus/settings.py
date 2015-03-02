@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'subscribe',
+    'userSettings',
     'social.apps.django_app.default',
 #    'django_extensions',
 #    'werkzeug',
@@ -135,3 +136,6 @@ if not os.environ.get("HOME") == "/home":
     import dj_database_url
     DATABASES['default'] = dj_database_url.config()
 '''
+
+#https://www.youtube.com/watch?v=qLRxkStiaUg&list=PLxxA5z-8B2xk4szCgFmgonNcCboyNneMD&index=22
+#AUTH_PROFILE_MODULE = 'userSettings.UserSettings'
