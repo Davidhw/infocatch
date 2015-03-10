@@ -19,6 +19,9 @@ def save(request):
             log.write(str(body.items()))
             log.write("in save")
 
+        if body['url'][-1]=="/":
+            body['url'] = body['url'][:-2]
+
         # if the feed doesn't exst yet, make it
         subscription,subscriptionCreated = Subscription.objects.get_or_create(url = body['url'],xpath=body['xpath'])
         if subscriptionCreated:

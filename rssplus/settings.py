@@ -11,6 +11,13 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'davidhweinstein@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
+
+
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
@@ -138,4 +145,4 @@ if not os.environ.get("HOME") == "/home":
 '''
 
 #https://www.youtube.com/watch?v=qLRxkStiaUg&list=PLxxA5z-8B2xk4szCgFmgonNcCboyNneMD&index=22
-#AUTH_PROFILE_MODULE = 'userSettings.UserSettings'
+AUTH_PROFILE_MODULE = 'userSettings.UserSettings'
