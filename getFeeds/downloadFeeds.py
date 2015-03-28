@@ -19,7 +19,8 @@ def ensureAbsolute(scrapedUrl,scrapedFromUrl):
 
 def getPDFOfFeeds(subscriptions):
     links = [link for link in linkList for linkList in [getLinksFromSubscription(sub) for sub in subscriptions]]
-    outputPdf = pdfkit.from_url([str(link) for link in links],False)
+    config = pdfkit.configuration(wkhtmltopdf= "/app/bin/wkhtmltopdf")
+    outputPdf = pdfkit.from_url([str(link) for link in links],False,configuration=config)
     return outputPdf
     
 
