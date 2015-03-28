@@ -38,7 +38,7 @@ def getEveryUsersFeeds():
         elif format == 't':
             pass
 
-        emailFeed(settings.email,attatchment,extension):
+        emailFeed(settings.email,attatchment,extension)
 
 
 def getLinksFromSubscription(sub):
