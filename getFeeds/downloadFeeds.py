@@ -51,7 +51,10 @@ def getEveryUsersFeeds():
 
 
 def getLinksFromSubscription(sub):
-    response = urllib2.urlopen(sub.url)
+    try:
+        response = urllib2.urlopen(sub.url)
+    except:
+        return []
     htmlparser = etree.HTMLParser()
     tree = etree.parse(response, htmlparser)
     elements = tree.xpath(sub.xpath)
