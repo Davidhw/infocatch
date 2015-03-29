@@ -1,10 +1,14 @@
 from userSettings.models import UserSettings
 import urllib2
-from subscribe.models import Subscription
+from subscribe.models import Subscription,SubscriptionUserPairing
 import time
 from lxml import etree,html
 import pdfkit
 from django.core.mail.message import EmailMessage
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+
+
 
 #http://stackoverflow.com/questions/11465555/can-we-use-xpath-with-beautifulsoup
 
@@ -18,17 +22,22 @@ def ensureAbsolute(scrapedUrl,scrapedFromUrl):
         return scrapedUrl
 
 def getPDFOfFeeds(subscriptions):
-    links = [link for link in linkList for linkList in [getLinksFromSubscription(sub) for sub in subscriptions]]
+#    links = [link for link in linkList for linkList in [getLinksFromSubscription(sub) for sub in subscriptions]]
+    # flatten list of lists of links
+    links = sum([getLinksFromSubscription(sub) for sub in subscriptions],[])
     config = pdfkit.configuration(wkhtmltopdf= "/app/bin/wkhtmltopdf")
     outputPdf = pdfkit.from_url([str(link) for link in links],False,configuration=config)
     return outputPdf
     
 
 def getEveryUsersFeeds():        
-    for u in User.objecs.all():
-        subscriptions = [sup.subscription for sup in SubscriptionUserPairing.objects.filter(user = u)]
-        settings = UserSettings.objects.get(user = u)
-        format = settings.format
+    for u in User.objects.all():
+        try:
+            subscriptions = [sup.subscription for sup in SubscriptionUserPairing.objects.filter(user = u)]
+            settings = UserSettings.objects.get(user = u)
+        except ObjectDoesNotExist:
+            continue
+        format = settings.feed_Format
         if format =='p':
             attatchment = getPDFOfFeeds(subscriptions)
             extension = "pdf"
