@@ -50,7 +50,7 @@ def getEveryUsersFeeds():
             continue
         format = settings.feed_Format
         if format =='p':
-            attatchment = getPDFOfLinks(subscriptions)
+            attatchment = getPDFOfLinks(links)
             extension = "pdf"
             
         elif format =='e':
