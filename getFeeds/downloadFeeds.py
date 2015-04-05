@@ -35,7 +35,7 @@ def getPDFOfFeeds(subscriptions):
 def getEveryUsersFeeds():        
     from selenium import webdriver
 #    driver = webdriver.Firefox()
-    path_to_ffdriver = BASE_DIR+'chromedriver
+    path_to_ffdriver = BASE_DIR+'chromedriver'
     browser = webdriver.Chrome(executable_path = path_to_ffdriver)
     for u in User.objects.all():
         try:
