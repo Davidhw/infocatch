@@ -7,6 +7,8 @@ import pdfkit
 from django.core.mail.message import EmailMessage
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+import selenium
+from rssplus.settings import BASE_DIR
 
 
 
@@ -31,6 +33,10 @@ def getPDFOfFeeds(subscriptions):
     
 
 def getEveryUsersFeeds():        
+    from selenium import webdriver
+#    driver = webdriver.Firefox()
+    path_to_ffdriver = BASE_DIR+'chromedriver
+    browser = webdriver.Chrome(executable_path = path_to_ffdriver)
     for u in User.objects.all():
         try:
             subscriptions = [sup.subscription for sup in SubscriptionUserPairing.objects.filter(user = u)]
@@ -51,6 +57,7 @@ def getEveryUsersFeeds():
 
 
 def getLinksFromSubscription(sub):
+    '''
     try:
         response = urllib2.urlopen(sub.url)
     except:
@@ -59,6 +66,10 @@ def getLinksFromSubscription(sub):
     tree = etree.parse(response, htmlparser)
     elements = tree.xpath(sub.xpath)
     return [element.values()[1] for element in elements]
+    '''
+    driver.get(sub.url)
+    elements = driver.find_elements_by_xpath(sub.xpath)
+    return [element.get_attribute('href') for element in elements]
 '''    
     for elmement in elements:
         htmls = [html.fromstring(urllib2.urlopen(ensureAbsolute(element.values()[1],sub.url)).read()) for element in elements]
