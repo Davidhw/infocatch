@@ -7,9 +7,10 @@ import pdfkit
 from django.core.mail.message import EmailMessage
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-import selenium
-from rssplus.settings import BASE_DIR
-
+#import selenium
+#from rssplus.settings import BASE_DIR
+from getFeeds.getHtml import GetHtml
+from lxml import html
 
 
 #http://stackoverflow.com/questions/11465555/can-we-use-xpath-with-beautifulsoup
@@ -33,10 +34,10 @@ def getPDFOfFeeds(subscriptions):
     
 
 def getEveryUsersFeeds():        
-    from selenium import webdriver
+#    from selenium import webdriver
 #    driver = webdriver.Firefox()
-    path_to_ffdriver = BASE_DIR+'chromedriver'
-    browser = webdriver.Chrome(executable_path = path_to_ffdriver)
+#    path_to_ffdriver = BASE_DIR+'/chromedriver'
+ #   browser = webdriver.Chrome(executable_path = path_to_ffdriver)
     for u in User.objects.all():
         try:
             subscriptions = [sup.subscription for sup in SubscriptionUserPairing.objects.filter(user = u)]
@@ -67,9 +68,16 @@ def getLinksFromSubscription(sub):
     elements = tree.xpath(sub.xpath)
     return [element.values()[1] for element in elements]
     '''
-    driver.get(sub.url)
-    elements = driver.find_elements_by_xpath(sub.xpath)
-    return [element.get_attribute('href') for element in elements]
+#    driver.get(sub.url)
+#    elements = driver.find_elements_by_xpath(sub.xpath)
+#    return [element.get_attribute('href') for element in elements]
+
+    # html is the etree's html parser
+    pageHtml = GetHtml.get_Html(sub.url)
+    tree = html.fromstring(pageHtml)
+    links = tree.xpath(sub.xpath)
+    return [ensureAbsolute(link,sub.url) for link in links]
+
 '''    
     for elmement in elements:
         htmls = [html.fromstring(urllib2.urlopen(ensureAbsolute(element.values()[1],sub.url)).read()) for element in elements]
