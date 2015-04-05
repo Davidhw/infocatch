@@ -1,3 +1,4 @@
+
 from userSettings.models import UserSettings
 import urllib2
 from subscribe.models import Subscription,SubscriptionUserPairing
@@ -7,9 +8,9 @@ import pdfkit
 from django.core.mail.message import EmailMessage
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-#import selenium
-#from rssplus.settings import BASE_DIR
-from getFeeds.getHtml import GetHtml
+from selenium import webdriver
+from rssplus.settings import BASE_DIR
+#from getFeeds.getHtml import GetHtml
 from lxml import html
 
 
@@ -24,10 +25,9 @@ def ensureAbsolute(scrapedUrl,scrapedFromUrl):
     else:
         return scrapedUrl
 
-def getPDFOfFeeds(subscriptions):
+def getPDFOfLinks(links):
 #    links = [link for link in linkList for linkList in [getLinksFromSubscription(sub) for sub in subscriptions]]
     # flatten list of lists of links
-    links = sum([getLinksFromSubscription(sub) for sub in subscriptions],[])
     config = pdfkit.configuration(wkhtmltopdf= "/app/bin/wkhtmltopdf")
     outputPdf = pdfkit.from_url([str(link) for link in links],False,configuration=config)
     return outputPdf
@@ -36,17 +36,21 @@ def getPDFOfFeeds(subscriptions):
 def getEveryUsersFeeds():        
 #    from selenium import webdriver
 #    driver = webdriver.Firefox()
-#    path_to_ffdriver = BASE_DIR+'/chromedriver'
- #   browser = webdriver.Chrome(executable_path = path_to_ffdriver)
+    path_to_driver = BASE_DIR+'/phantomjs-1.9.1-linux-x86_64/bin/phantomjs'
+    browser = webdriver.PhantomJS(executable_path = path_to_driver)
+#    browser = webdriver.PhantomJS()
     for u in User.objects.all():
         try:
             subscriptions = [sup.subscription for sup in SubscriptionUserPairing.objects.filter(user = u)]
             settings = UserSettings.objects.get(user = u)
+            links = sum([getLinksFromSubscription(sub,browser) for sub in subscriptions],[])
+            
+
         except ObjectDoesNotExist:
             continue
         format = settings.feed_Format
         if format =='p':
-            attatchment = getPDFOfFeeds(subscriptions)
+            attatchment = getPDFOfLinks(subscriptions)
             extension = "pdf"
             
         elif format =='e':
@@ -57,7 +61,7 @@ def getEveryUsersFeeds():
         emailFeed(settings.email,attatchment,extension)
 
 
-def getLinksFromSubscription(sub):
+def getLinksFromSubscription(sub,browser):
     '''
     try:
         response = urllib2.urlopen(sub.url)
@@ -68,15 +72,17 @@ def getLinksFromSubscription(sub):
     elements = tree.xpath(sub.xpath)
     return [element.values()[1] for element in elements]
     '''
-#    driver.get(sub.url)
-#    elements = driver.find_elements_by_xpath(sub.xpath)
-#    return [element.get_attribute('href') for element in elements]
+    browser.get(sub.url)
+    elements = browser.find_elements_by_xpath(sub.xpath)
+    return [element.get_attribute('href') for element in elements]
 
     # html is the etree's html parser
+    '''
     pageHtml = GetHtml.get_Html(sub.url)
     tree = html.fromstring(pageHtml)
     links = tree.xpath(sub.xpath)
     return [ensureAbsolute(link,sub.url) for link in links]
+    '''
 
 '''    
     for elmement in elements:
