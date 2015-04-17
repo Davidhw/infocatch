@@ -35,9 +35,9 @@ def getPDFOfLinks(links):
 
 def getSubscriptionLinks(u,browser):
     links = []
-    for sub in SubscriptionUserPairing.objects.filter(user = u):
+    for subUserPair in SubscriptionUserPairing.objects.filter(user = u):
         try:
-            links.append(getLinksFromSubscription(sub,browser))
+            links.append(getLinksFromSubscription(subUserPair.subscription,browser))
         except ObjectDoesNotExist:
             pass
     return links
