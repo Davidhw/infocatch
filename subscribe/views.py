@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, render_to_response
 from django.shortcuts import redirect
 from django.template import RequestContext
@@ -9,6 +10,7 @@ import sys
 import os
 from models import Subscription,SubscriptionUserPairing
 from rssplus.views import home
+from rssplus.settings import BASE_DIR
 from selenium import webdriver
 import time
 
@@ -64,7 +66,7 @@ def load_external_page(request,url):
     
     url = addHttp(url)
 #    html = urllib2.urlopen(url).read()
-    path_to_driver = '/home/d/rssplus/rssplus/phantomjs-1.9.1-linux-x86_64/bin/phantomjs'
+    path_to_driver = BASE_DIR+'/phantomjs-1.9.1-linux-x86_64/bin/phantomjs'
     browser = webdriver.PhantomJS(executable_path = path_to_driver)
     browser.get(url)
     html = browser.page_source
