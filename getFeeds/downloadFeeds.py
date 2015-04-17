@@ -35,12 +35,11 @@ def getPDFOfLinks(links):
 
 def getSubscriptionLinks(u,browser):
     links = []
-    try:
-        subscriptions = [sup.subscription for sup in SubscriptionUserPairing.objects.filter(user = u)]
-        settings = UserSettings.objects.get(user = u)
-        links = sum([getLinksFromSubscription(sub,browser) for sub in subscriptions],[])
-    except ObjectDoesNotExist:
-        pass
+    for sup in SubscriptionUserPairing.objects.filter(user = u):
+        try:
+            links.add(getLinksFromSubscription(sub,browser)
+        except ObjectDoesNotExist:
+            pass
     return links
 
     
@@ -53,8 +52,8 @@ def getEveryUsersFeeds():
 #    browser = webdriver.PhantomJS()
     for u in User.objects.all():
         links = getSubscriptionLinks(u,browser)
+        settings = UserSettings.objects.get(user = u)
         format = settings.feed_Format
-
         if format =='p':
             attatchment = getPDFOfLinks(links)
             extension = "pdf"
