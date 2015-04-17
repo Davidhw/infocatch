@@ -37,7 +37,7 @@ def getSubscriptionLinks(u,browser):
     links = []
     for sup in SubscriptionUserPairing.objects.filter(user = u):
         try:
-            links.add(getLinksFromSubscription(sub,browser))
+            links.append(getLinksFromSubscription(sub,browser))
         except ObjectDoesNotExist:
             pass
     return links
