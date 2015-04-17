@@ -40,7 +40,7 @@ def getSubscriptionLinks(u,browser):
         settings = UserSettings.objects.get(user = u)
         links = sum([getLinksFromSubscription(sub,browser) for sub in subscriptions],[])
     except ObjectDoesNotExist:
-        continue
+        pass
     return links
 
     
