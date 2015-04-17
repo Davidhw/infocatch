@@ -33,6 +33,18 @@ def getPDFOfLinks(links):
     return outputPdf
     
 
+def getSubscriptionLinks(u,browser):
+    links = []
+    try:
+        subscriptions = [sup.subscription for sup in SubscriptionUserPairing.objects.filter(user = u)]
+        settings = UserSettings.objects.get(user = u)
+        links = sum([getLinksFromSubscription(sub,browser) for sub in subscriptions],[])
+    except ObjectDoesNotExist:
+        continue
+    return links
+
+    
+
 def getEveryUsersFeeds():        
 #    from selenium import webdriver
 #    driver = webdriver.Firefox()
@@ -40,15 +52,9 @@ def getEveryUsersFeeds():
     browser = webdriver.PhantomJS(executable_path = path_to_driver)
 #    browser = webdriver.PhantomJS()
     for u in User.objects.all():
-        try:
-            subscriptions = [sup.subscription for sup in SubscriptionUserPairing.objects.filter(user = u)]
-            settings = UserSettings.objects.get(user = u)
-            links = sum([getLinksFromSubscription(sub,browser) for sub in subscriptions],[])
-            
-
-        except ObjectDoesNotExist:
-            continue
+        links = getSubscriptionLinks(u,browser)
         format = settings.feed_Format
+
         if format =='p':
             attatchment = getPDFOfLinks(links)
             extension = "pdf"
