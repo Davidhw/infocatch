@@ -67,7 +67,7 @@ def load_external_page(request,url):
     url = addHttp(url)
 #    html = urllib2.urlopen(url).read()
     path_to_driver = BASE_DIR+'/phantomjs-1.9.1-linux-x86_64/bin/phantomjs'
-    browser = webdriver.PhantomJS(executable_path = path_to_driver)
+    browser = webdriver.PhantomJS(executable_path = path_to_driver,service_args=['--ssl-protocol=TLSv1'])
     browser.get(url)
     html = browser.page_source
     browser.quit()
