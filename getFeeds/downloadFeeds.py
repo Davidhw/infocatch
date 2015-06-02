@@ -28,8 +28,19 @@ def ensureAbsolute(scrapedUrl,scrapedFromUrl):
 def getPDFOfLinks(links):
 #    links = [link for link in linkList for linkList in [getLinksFromSubscription(sub) for sub in subscriptions]]
     # flatten list of lists of links
+    strLinks = [str(link) for link in links]
+    print strLinks
+    options = {
+    'load-error-handling': 'ignore',
+    'javascript-delay': '500'
+    }
+    '''
+    toc = {
+    'xsl-style-sheet': 'toc.xsl'
+    }
+    '''
     config = pdfkit.configuration(wkhtmltopdf= "/app/bin/wkhtmltopdf")
-    outputPdf = pdfkit.from_url([str(link) for link in links],False,configuration=config)
+    outputPdf = pdfkit.from_url(strLinks,False,configuration=config,options=options)
     return outputPdf
     
 
@@ -53,7 +64,7 @@ def getEveryUsersFeeds():
 #    browser = webdriver.PhantomJS()
     for u in User.objects.all():
         links = getSubscriptionLinks(u,browser)
-        settings = UserSettings.objects.get(user = u)
+        settings = UserSettings.objects.get_or_create(user = u,defaults={'email_Feeds_To': u.email,'feed_Format':UserSettings.PDF})[0]
         format = settings.feed_Format
         if format =='p':
             attatchment = getPDFOfLinks(links)
