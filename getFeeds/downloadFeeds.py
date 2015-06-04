@@ -23,16 +23,36 @@ def ensureAbsolute(scrapedUrl,scrapedFromUrl):
         else:
             return scrapedFromUrl+scrapedUrl
     else:
-        return scrapedUrl
+        return scrapedUrln
 
 def getPDFOfLinks(links):
 #    links = [link for link in linkList for linkList in [getLinksFromSubscription(sub) for sub in subscriptions]]
     # flatten list of lists of links
-    strLinks = [str(link) for link in links]
-    print strLinks
+    print links
+    '''
+    i = 1
+    FILENAME = 'tempHtmlFile'
+    fileNameStrings = []
+    import os
+    currentPath = os.getcwd()
+    for link in links:
+        try:
+            response = urllib2.urlopen(link)
+            page_content = response.read()
+            fname = currentPath+'/'+'getFeeds/'+FILENAME+str(i)+".html"
+            with open(fname, 'w') as temp:
+                temp.write(page_content)
+            fileNameStrings.append(fname)
+            i = i+1
+        except:
+            pass
+    
+#    fileNameStrings = [FILENAME+str(ii+1) for ii in range(i)]
+    '''
     options = {
-    'load-error-handling': 'ignore',
-    'javascript-delay': '500'
+    'load-error-handling': 'skip',
+    'load-media-error-handling': 'skip',
+    'disable-javascript':None
     }
     '''
     toc = {
@@ -40,7 +60,14 @@ def getPDFOfLinks(links):
     }
     '''
     config = pdfkit.configuration(wkhtmltopdf= "/app/bin/wkhtmltopdf")
-    outputPdf = pdfkit.from_url(strLinks,False,configuration=config,options=options)
+
+#    outputpdf = pdfkit.from_file(fileNameStrings,"out.pdf",configuration = config)
+#    outputPdf = pdfkit.from_file(fileNameStrings,False,configuration = config)
+
+    
+
+    outputPdf = pdfkit.from_url(links,False,configuration=config,options=options)
+
     return outputPdf
     
 
@@ -49,7 +76,7 @@ def getSubscriptionLinks(u,browser):
     for subUserPair in SubscriptionUserPairing.objects.filter(user = u):
         try:
             for link in getLinksFromSubscription(subUserPair.subscription,browser):
-                links.append(link)
+                links.append(str(link))
         except ObjectDoesNotExist:
             pass
     return links
@@ -66,16 +93,29 @@ def getEveryUsersFeeds():
         links = getSubscriptionLinks(u,browser)
         settings = UserSettings.objects.get_or_create(user = u,defaults={'email_Feeds_To': u.email,'feed_Format':UserSettings.PDF})[0]
         format = settings.feed_Format
-        if format =='p':
-            attatchment = getPDFOfLinks(links)
-            extension = "pdf"
+        if format ==UserSettings.PDF:
+            linkGroupSize = 10
+            if len(links)> linkGroupSize:
+                linkGroups = [links[i*linkGroupSize:(i+1)*linkGroupSize] for i in range(len(links)/linkGroupSize)]
+                for linkGroup in linkGroups:
+                    emailFeed(settings.email_Feeds_To,attachment=getPDFOfLinks(linkGroup),extension="pdf")
+            else:
+                emailFeed(settings.email_Feeds_To,attachment=getPDFOfLinks(links),extension="pdf")
+#            attachment = getPDFOfLinks(links)
+#            extension = "pdf"
             
         elif format =='e':
             pass
-        elif format == 't':
-            pass
+        elif format == UserSettings.EMAIL_LINKS_BATCH:
+            # email the links all at once, space delimited
+            emailFeed(settings.email_Feeds_To,message=reduce(lambda x,y: x+ ' '+y, links))
+        elif format == UserSettings.EMAIL_LINKS_INDIVIDUALLY:
+            # email the links one at a time
+            for link in links:
+                emailFeed(settings.email_Feeds_To,message=link)
 
-        emailFeed(settings.email,attatchment,extension)
+
+#        emailFeed(settings.email,attachment,extension)
 
 
 def getLinksFromSubscription(sub,browser):
@@ -107,14 +147,18 @@ def getLinksFromSubscription(sub,browser):
 ''' 
 
 #http://twigstechtips.blogspot.com/2012/01/django-send-email-with-attachment.html
-def emailFeed(send_to,attatchment,extension):
-    if extension=="pdf":
-        mType = "application/pdf"
-
+def emailFeed(send_to,message=None,attachment=None,extension=None):
     email = EmailMessage()
     email.subject = "InfoCatch Feed"
-    email.body = "Please find your feed attatched."
+
     email.from_email = "davidhweinstein@gmail.com"
     email.to = [ send_to, ] 
-    email.attach(filename = "newspaper", mimetype = mType, content = attatchment)
+
+    if extension == None:
+        mType = "text/plain"
+        email.body = message
+    elif extension=="pdf":
+        email.body = "Please find your feed attatched."
+        mType = "application/pdf"
+        email.attach(filename = "newspaper", mimetype = mType, content = attachment)
     email.send()
