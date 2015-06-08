@@ -54,11 +54,12 @@ def getPDFOfLinks(links):
     'load-media-error-handling': 'skip',
     'disable-javascript':None
     }
-    '''
+
+
     toc = {
-    'xsl-style-sheet': 'toc.xsl'
+    'toc-header-text':"Table Of Contents!"
     }
-    '''
+
     config = pdfkit.configuration(wkhtmltopdf= "/app/bin/wkhtmltopdf")
 
 #    outputpdf = pdfkit.from_file(fileNameStrings,"out.pdf",configuration = config)
@@ -66,7 +67,7 @@ def getPDFOfLinks(links):
 
     
 
-    outputPdf = pdfkit.from_url(links,False,configuration=config,options=options)
+    outputPdf = pdfkit.from_url(links,False,configuration=config,toc=toc,options=options)
 
     return outputPdf
     
