@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
+import simplejson
 
 class Subscription(models.Model):
     url = models.CharField(max_length=100)
@@ -26,4 +28,23 @@ class SubscriptionUserPairing(models.Model):
     user = models.ForeignKey(User)
     subscription = models.ForeignKey(Subscription)
             
+class SubscriptionLinks(models.Model):
+    subscription = models.ForeignKey(Subscription)
+    links = models.CharField(max_length=800)
+    # make the date automatically when the object is created. the lack of parens in date.today means that the function gets passed rather than evaluating the date when the model is first defined.
+    date = models.DateField(blank=True,null=True)
 
+ # getters and setters for links (so that we can store a list) based on http://stackoverflow.com/questions/22340258/django-list-field-in-model
+    def setLinks(self, links):
+        self.links = simplejson.dumps(links)
+
+    def getLinks(self):
+        if self.links == "":
+            return []
+        else:
+            return simplejson.loads(self.links)
+
+    def update(self,date,links):
+        self.date = date
+        self.setLinks(links)
+        self.save()

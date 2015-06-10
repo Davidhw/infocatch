@@ -1,7 +1,7 @@
 
 from userSettings.models import UserSettings
 import urllib2
-from subscribe.models import Subscription,SubscriptionUserPairing
+from subscribe.models import Subscription,SubscriptionUserPairing,SubscriptionLinks
 import time
 from lxml import etree,html
 import pdfkit
@@ -12,6 +12,7 @@ from selenium import webdriver
 from rssplus.settings import BASE_DIR
 #from getFeeds.getHtml import GetHtml
 from lxml import html
+import datetime
 
 
 #http://stackoverflow.com/questions/11465555/can-we-use-xpath-with-beautifulsoup
@@ -92,29 +93,33 @@ def getEveryUsersFeeds():
 #    browser = webdriver.PhantomJS()
     for u in User.objects.all():
         links = getSubscriptionLinks(u,browser)
-        settings = UserSettings.objects.get_or_create(user = u,defaults={'email_Feeds_To': u.email,'feed_Format':UserSettings.PDF})[0]
-        format = settings.feed_Format
-        if format ==UserSettings.PDF:
-            linkGroupSize = 10
-            if len(links)> linkGroupSize:
-                linkGroups = [links[i*linkGroupSize:(i+1)*linkGroupSize] for i in range(len(links)/linkGroupSize)]
-                for linkGroup in linkGroups:
-                    emailFeed(settings.email_Feeds_To,attachment=getPDFOfLinks(linkGroup),extension="pdf")
-            else:
-                emailFeed(settings.email_Feeds_To,attachment=getPDFOfLinks(links),extension="pdf")
-#            attachment = getPDFOfLinks(links)
-#            extension = "pdf"
-            
-        elif format =='e':
+        if len(links) == 0:
+            print "No links for this user."
             pass
-        elif format == UserSettings.EMAIL_LINKS_BATCH:
-            # email the links all at once, space delimited
-            emailFeed(settings.email_Feeds_To,message=reduce(lambda x,y: x+ ' '+y, links))
-        elif format == UserSettings.EMAIL_LINKS_INDIVIDUALLY:
-            # email the links one at a time
-            for link in links:
-                emailFeed(settings.email_Feeds_To,message=link)
-
+        else:
+            settings = UserSettings.objects.get_or_create(user = u,defaults={'email_Feeds_To': u.email,'feed_Format':UserSettings.PDF})[0]
+            format = settings.feed_Format
+            if format ==UserSettings.PDF:
+                linkGroupSize = 10
+                if len(links)> linkGroupSize:
+                    linkGroups = [links[i*linkGroupSize:(i+1)*linkGroupSize] for i in range(len(links)/linkGroupSize)]
+                    for linkGroup in linkGroups:
+                        emailFeed(settings.email_Feeds_To,attachment=getPDFOfLinks(linkGroup),extension="pdf")
+                else:
+                    emailFeed(settings.email_Feeds_To,attachment=getPDFOfLinks(links),extension="pdf")
+    #            attachment = getPDFOfLinks(links)
+    #            extension = "pdf"
+                
+            elif format =='e':
+                pass
+            elif format == UserSettings.EMAIL_LINKS_BATCH:
+                # email the links all at once, space delimited
+                emailFeed(settings.email_Feeds_To,message=reduce(lambda x,y: x+ ' '+y, links))
+            elif format == UserSettings.EMAIL_LINKS_INDIVIDUALLY:
+                # email the links one at a time
+                for link in links:
+                    emailFeed(settings.email_Feeds_To,message=link)
+    
 
 #        emailFeed(settings.email,attachment,extension)
 
@@ -130,9 +135,25 @@ def getLinksFromSubscription(sub,browser):
     elements = tree.xpath(sub.xpath)
     return [element.values()[1] for element in elements]
     '''
-    browser.get(sub.url)
-    elements = browser.find_elements_by_xpath(sub.xpath)
-    return [element.get_attribute('href') for element in elements]
+    subscriptionLinks = SubscriptionLinks.objects.get_or_create(subscription = sub)[0]
+    todaysDate = datetime.date.today() 
+    # if we've already determined todays links, just return them
+    if subscriptionLinks.date == todaysDate:
+        return subscriptionLinks.getLinks()
+
+    # otherwise, save the links currently on the page and return the new ones
+    else:
+        browser.get(sub.url)
+        elements = browser.find_elements_by_xpath(sub.xpath)
+        linksOnPage = [element.get_attribute('href') for element in elements]
+
+        # determine which links are new
+        newLinks = [link for link in linksOnPage if link not in subscriptionLinks.getLinks()]
+
+        #update which links are stored
+        subscriptionLinks.update(todaysDate,linksOnPage)
+
+        return newLinks
 
     # html is the etree's html parser
     '''
