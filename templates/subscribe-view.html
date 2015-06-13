@@ -31,8 +31,14 @@ subscribe = function(){
 <script>
 var CSRF_TOKEN = '{{csrf_token}}';
 var URL = '{{url}}';
+var root = location.protocol + "//" + location.host;
+var clickBehaviorLoc = root+"static/js/clickBehavior.js"
+
 </script>
-<script src="{% static 'js/clickBehavior.js' %}"> </script>
+
+<!-- <script> src = "http://infocatch.herokuapp.com/static/js/clickBehavior.js"</script> -->
+<script src="{% static 'js/clickBehavior.js' %}"> </script> 
+
 
 
 </h1 Preparing feed of {{url}} >

@@ -1,18 +1,17 @@
-
 from django.shortcuts import render, render_to_response
 from django.shortcuts import redirect
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 import json
-import urllib2
 import sys
 import os
 from models import Subscription,SubscriptionUserPairing
 from rssplus.views import home
-from rssplus.settings import BASE_DIR
-from selenium import webdriver
+from rssplus.settings import BASE_URL
 import time
+import re
+from getFeeds.getPageSource import getPageSourceWithRunningJavascript
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 def save(request):
@@ -66,11 +65,15 @@ def load_external_page(request,url):
     
     url = addHttp(url)
 #    html = urllib2.urlopen(url).read()
+    '''
     path_to_driver = BASE_DIR+'/phantomjs-1.9.1-linux-x86_64/bin/phantomjs'
     browser = webdriver.PhantomJS(executable_path = path_to_driver,service_args=['--ssl-protocol=TLSv1'])
     browser.get(url)
-    html = browser.page_source
+    html = removeJavascript(browser.page_source)
     browser.quit()
+    '''
+
+    html = getPageSourceWithRunningJavascript(url,removeJavascriptFromSource=True)
     split = html.split("</head>")
     if len(split)==2:
         html1 = html[0:len(split[0])+len("</head>")]
@@ -78,6 +81,11 @@ def load_external_page(request,url):
     else:
         html1 = html
         html2 = ""
+
+    # make the base url infocatch so that any site that sets the base url can still load the clickBehavior script from a relative link
+    # we don't worry about html2, because the base has to be set in the header tag
+    html1 = re.sub(r'<base href.*>','<base href = "'+BASE_URL+'">',html1)
+
 #    html1 = html.split("/head>")[0]
 #    html2 = html.split("/head>")[1]
 #    html = "<h1 hi />"
@@ -91,6 +99,13 @@ def load_external_page(request,url):
 
 
 
+'''
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(pageSource.lower())
+    for element in soup.findAll('script'):
+        element.extract()
+    return force_text(soup.getText,
+'''
 
 
 

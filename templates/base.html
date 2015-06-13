@@ -43,6 +43,7 @@ e" class="navbar-toggle">
        {% if user and not user.is_anonymous %}
         <li><a href="{% url 'home' %}">Home</a></li>
         <li><a href="{% url 'settings' %}">Settings</a></li>
+        <li><a href="{{BASE_URL}}/rss/{{user}}">RSS Feed</a></li>
         <li><a href="{% url 'auth:logout' %}?next={% url 'home' %}">Logout</a></li>
        {% else %}
         <li><a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login With Google</a></li>

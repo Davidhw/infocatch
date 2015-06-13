@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'subscribe',
     'userSettings',
     'social.apps.django_app.default',
+    'getFeeds',
 #    'django_extensions',
 #    'werkzeug',
 )

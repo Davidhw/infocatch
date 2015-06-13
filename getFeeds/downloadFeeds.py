@@ -1,4 +1,3 @@
-
 from userSettings.models import UserSettings
 import urllib2
 from subscribe.models import Subscription,SubscriptionUserPairing,SubscriptionLinks
@@ -73,7 +72,12 @@ def getPDFOfLinks(links):
     return outputPdf
     
 
-def getSubscriptionLinks(u,browser):
+def getSubscriptionLinks(u,browser=None):
+    quitBrowser = False
+    if browser == None:
+        browser = getBrowser()
+        quitBrowser = True
+        
     links = []
     for subUserPair in SubscriptionUserPairing.objects.filter(user = u):
         try:
@@ -81,16 +85,18 @@ def getSubscriptionLinks(u,browser):
                 links.append(str(link))
         except ObjectDoesNotExist:
             pass
+
+    if quitBrowser:
+        browser.quit()
     return links
 
+def getBrowser():
+    path_to_driver = BASE_DIR+'/phantomjs-1.9.1-linux-x86_64/bin/phantomjs'
+    return webdriver.PhantomJS(executable_path = path_to_driver,service_args=['--ssl-protocol=TLSv1'])
     
 
 def getEveryUsersFeeds():        
-#    from selenium import webdriver
-#    driver = webdriver.Firefox()
-    path_to_driver = BASE_DIR+'/phantomjs-1.9.1-linux-x86_64/bin/phantomjs'
-    browser = webdriver.PhantomJS(executable_path = path_to_driver,service_args=['--ssl-protocol=TLSv1'])
-#    browser = webdriver.PhantomJS()
+    browser = getBrowser()
     for u in User.objects.all():
         links = getSubscriptionLinks(u,browser)
         if len(links) == 0:
@@ -119,22 +125,21 @@ def getEveryUsersFeeds():
                 # email the links one at a time
                 for link in links:
                     emailFeed(settings.email_Feeds_To,message=link)
+            elif format == UserSettings.JUST_RSS:
+                pass
+
+    browser.quit()
     
 
 #        emailFeed(settings.email,attachment,extension)
 
 
-def getLinksFromSubscription(sub,browser):
-    '''
-    try:
-        response = urllib2.urlopen(sub.url)
-    except:
-        return []
-    htmlparser = etree.HTMLParser()
-    tree = etree.parse(response, htmlparser)
-    elements = tree.xpath(sub.xpath)
-    return [element.values()[1] for element in elements]
-    '''
+def getLinksFromSubscription(sub,browser=None):
+    quitBrowser = False
+    if browser == None:
+        browser = getBrowser()
+        quitBrowser = True
+
     subscriptionLinks = SubscriptionLinks.objects.get_or_create(subscription = sub)[0]
     todaysDate = datetime.date.today() 
     # if we've already determined todays links, just return them
@@ -153,20 +158,10 @@ def getLinksFromSubscription(sub,browser):
         #update which links are stored
         subscriptionLinks.update(todaysDate,linksOnPage)
 
+        if quitBrowser:
+            browser.quit()
         return newLinks
 
-    # html is the etree's html parser
-    '''
-    pageHtml = GetHtml.get_Html(sub.url)
-    tree = html.fromstring(pageHtml)
-    links = tree.xpath(sub.xpath)
-    return [ensureAbsolute(link,sub.url) for link in links]
-    '''
-
-'''    
-    for elmement in elements:
-        htmls = [html.fromstring(urllib2.urlopen(ensureAbsolute(element.values()[1],sub.url)).read()) for element in elements]
-''' 
 
 #http://twigstechtips.blogspot.com/2012/01/django-send-email-with-attachment.html
 def emailFeed(send_to,message=None,attachment=None,extension=None):

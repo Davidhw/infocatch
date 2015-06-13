@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^subscribe/',include('subscribe.urls')),
     url(r'^settings/',include('userSettings.urls')),
+    url(r'^rss/',include('getFeeds.urls')),
         
 #    url(r'^static/(?P<path>.*)$','django.views.static.serve',{'document_root',settings.STATICFILES_DIRS, "url"})
 #    url(r'^subscribe/(?P<url>\.+)', subscribe.views.load_external_page()),
