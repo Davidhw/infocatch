@@ -7,11 +7,25 @@ import json
 import sys
 import os
 from models import Subscription,SubscriptionUserPairing
-from rssplus.views import home
+#from rssplus.views import home
 from rssplus.settings import BASE_URL
 import time
 import re
 from getFeeds.getPageSource import getPageSourceWithRunningJavascript
+from django.views.generic.list import ListView
+from django.core.urlresolvers import reverse_lazy
+
+
+class DeleteUserSubPairView(ListView):
+    model = SubscriptionUserPairing
+#    success_url = reverse_lazy('home')
+
+    def get_object(self):
+        try:
+            return SubscriptionUserPairing.objects.filter(user=self.request['user'])
+        except:
+            return None
+    
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 def save(request):
