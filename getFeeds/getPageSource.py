@@ -5,7 +5,7 @@ from rssplus.settings import BASE_DIR, BASE_URL
 
 def removeJavascript(pageSource):
     # just remove the script tags
-    return re.sub(r'<script>.+</script>','',pageSource)
+    return re.sub(r'<script.+</script>','',pageSource)
 
 #    from django.utils.html import strip_tags                                  
 #    return strip_tags(pageSource)                                             
