@@ -30,7 +30,7 @@ class SubscriptionUserPairing(models.Model):
             
 class SubscriptionLinks(models.Model):
     subscription = models.ForeignKey(Subscription)
-    links = models.CharField(max_length=800)
+    links = models.CharField(max_length=4000)
     # make the date automatically when the object is created. the lack of parens in date.today means that the function gets passed rather than evaluating the date when the model is first defined.
     date = models.DateField(blank=True,null=True)
 
