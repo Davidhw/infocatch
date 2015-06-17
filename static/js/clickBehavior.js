@@ -300,7 +300,6 @@ window.addEventListener("keydown", function(e) {
         } else if (e.keyCode == DOWNARROW){
             console.log("down");
             broadenSimilarNodes(-1)
-	}
         } else if (e.keyCode == RIGHTARROW){
 	    console.log("right arrow")
             var http = new XMLHttpRequest();
@@ -317,7 +316,9 @@ window.addEventListener("keydown", function(e) {
 	        http.send(JSON.stringify(parameters))
         
 	    }
-	}
     }
+
+
 }, false);
+
 
