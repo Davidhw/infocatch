@@ -305,7 +305,7 @@ window.addEventListener("keydown", function(e) {
             var http = new XMLHttpRequest();
             var url = "/subscribe/save";
 	        http.open("POST",url,true);
-            http.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
+            http.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
 
             var parameters = {
                "url": "{{url}}",
@@ -314,6 +314,7 @@ window.addEventListener("keydown", function(e) {
             };
             console.log(JSON.stringify(parameters));
 	        http.send(JSON.stringify(parameters))
+	    document.location.href = '../'
         
 	    }
     }
