@@ -308,7 +308,7 @@ window.addEventListener("keydown", function(e) {
             http.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
 
             var parameters = {
-               "url": "{{url}}",
+               "url": URL,
                "xpath": similarElementsXpath,
                "data":"blarg"
             };
