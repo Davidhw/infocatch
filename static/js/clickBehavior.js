@@ -306,7 +306,7 @@ window.addEventListener("keydown", function(e) {
             var url = "/subscribe/save";
 	        http.open("POST",url,true);
             http.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
-	    http.request.onreadystatechange = function()
+	    http.onreadystatechange = function()
 	    {
 		if (http.readyState==4 && http.status==200){
 		document.location.href = '../'
