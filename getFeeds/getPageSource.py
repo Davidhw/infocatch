@@ -22,17 +22,16 @@ def removeJavascript(pageSource,allJavascript=True):
 #    from lxml import etree                                                    
 #    return lxml.html.tostring(cleaner.clean_html(etree.fromstring(pageSource)),encoding='unicode') 
 
-def getPageSourceWithRunningJavascript(link,keepJavascript=0):
+def getPageSourceWithRunningJavascript(link):
     path_to_driver = BASE_DIR+'/phantomjs-1.9.1-linux-x86_64/bin/phantomjs'  
     browser =webdriver.PhantomJS(executable_path = path_to_driver,service_args = ['--ssl-protocol=TLSv1'])                                                    
     browser.get(link)                                                           
     html = browser.page_source                               
     browser.quit()   
-    return removeJavascript(html)
-
-#    if keepJavascript==2:
-
+    return html
 '''
+    if keepJavascript==2:
+        return removeJavascript(html)
     elif keepJavascript ==1:
         return removeJavascript(html,allJavascript=False)
     else:
