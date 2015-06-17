@@ -3,10 +3,12 @@ import re
 from selenium import webdriver
 from rssplus.settings import BASE_DIR, BASE_URL
 
-def removeJavascript(pageSource):
+def removeJavascript(pageSource,allJavascript=True):
     # just remove the script tags
-    return re.sub(r'<script.+</script>','',pageSource)
-
+    if allJavascript:
+        return re.sub(r'<script.+</script>','',pageSource,flags=re.DOTALL)
+    else:
+        return re.sub(r'<script.+</script>','',pageSource)
 #    from django.utils.html import strip_tags                                  
 #    return strip_tags(pageSource)                                             
 #    cleaner = Cleaner()                                                       
@@ -20,15 +22,17 @@ def removeJavascript(pageSource):
 #    from lxml import etree                                                    
 #    return lxml.html.tostring(cleaner.clean_html(etree.fromstring(pageSource)),encoding='unicode') 
 
-def getPageSourceWithRunningJavascript(link,removeJavascriptFromSource = False):
+def getPageSourceWithRunningJavascript(link,keepJavascript=0):
     path_to_driver = BASE_DIR+'/phantomjs-1.9.1-linux-x86_64/bin/phantomjs'  
     browser =webdriver.PhantomJS(executable_path = path_to_driver,service_args = ['--ssl-protocol=TLSv1'])                                                    
     browser.get(link)                                                           
     html = browser.page_source                               
     browser.quit()   
 
-    if removeJavascriptFromSource:
+    if keepJavascript==2:
         return removeJavascript(html)
+    elif keepJavascript ==1:
+        return removeJavascript(html,allJavascript=False)
     else:
         return html
 

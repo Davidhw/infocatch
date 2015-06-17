@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-Welcome to InfoCatch, a service that, once a day, sends you an offline-viewable collection of the web content you've expressed interest in. Note that Infocatch is still being developed, so rather than delivering content to you, it will just print the url and xpath of the content you specify. 
+Welcome to InfoCatch, a service that, once a day, sends you an offline-viewable collection of the web content you've expressed interest in.
 
  {% if user and not user.is_anonymous %}
 
-To begin, enter a url into the box below. Currently, some URLs don't work. Here are two examples of URLs that work: http://sarasota.craigslist.org/search/mob?query=galaxy+note+4 and reddit.com
+To begin, enter a url into the box below and click "Load Page". Once you've been taken to the url you entered, click a link that you would open, and then hit the up arrow on your keyboard until all of the links you would consider clicking are highlighted. Then either click subscribe or hit the right arrow on your keyboard. You should only fiddle with the javascript options if you are unable to get the page to open just by entering the url (eg if you want to subscribe to some Google+ page, you will need to select "Some Javascript"). 
+For starters, you could enter this url - news.ycombinator.com
 
 
 <form action="/subscribe/" method="post">{% csrf_token %}
@@ -14,9 +15,26 @@ To begin, enter a url into the box below. Currently, some URLs don't work. Here 
 </form>
 
 <br>
-As this service is still being developed, it does not yet deliver content. It just prints the selected content's url and xpath below.
-<br>
-{{subscriptionsString|safe}}
+
+
+ <!--{{subscriptionsString|safe}}-->
+
+{% if subscriptionUserPairList %}
+Subscriptions:
+   <form action="#" method="post">{% csrf_token %}
+   {% for item in subscriptionUserPairList %}
+      <li>
+      <input type="checkbox" name="todelete" value="{{ item.id }}">
+      {{ item.subscription }}
+      </li>
+   {% endfor %}
+   <input type="submit" value="Delete Subscription"> 
+
+
+   </form>
+{% else %}
+   You are not subscribed to anything.
+{% endif %}
 
 {% else %}
 <br>

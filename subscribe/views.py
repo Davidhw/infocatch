@@ -11,7 +11,7 @@ from models import Subscription,SubscriptionUserPairing
 from rssplus.settings import BASE_URL
 import time
 import re
-from getFeeds.getPageSource import getPageSourceWithRunningJavascript
+from getFeeds.getPageSource import getPageSourceWithRunningJavascript,removeJavascript
 from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse_lazy
 
@@ -62,10 +62,15 @@ def save(request):
 
 def load_external_page_site_not_specified_in_URL(request):
     from rssplus.forms import URLForm
-    url = URLForm(request.POST).data["siteUrl"]
-    return load_external_page(request,url)
+    try:
+        url = URLForm(request.POST).data["siteUrl"]
+        keepJavascript = URLForm(request.POST).data["keepJavascript"]
+        return load_external_page(request,url,keepJavascript)
+    except:
+        return redirect('home')
+    
 
-def load_external_page(request,url):
+def load_external_page(request,url,keepJavascript):
 
     def addHttp(url):
         http = "http://"
@@ -86,11 +91,11 @@ def load_external_page(request,url):
     html = removeJavascript(browser.page_source)
     browser.quit()
     '''
-
-    html = getPageSourceWithRunningJavascript(url,removeJavascriptFromSource=True)
+    html = getPageSourceWithRunningJavascript(url,keepJavascript = keepJavascript)
+    # </head> was sometimes getting removed with javascript (?!) so just removing it after split
     split = html.split("</head>")
     if len(split)==2:
-        html1 = html[0:len(split[0])+len("</head>")]
+        html1 = split[0]+"</head>"
         html2 = split[1]
     else:
         html1 = html
@@ -108,7 +113,7 @@ def load_external_page(request,url):
 #    with open("RSSlog.txt",'w') as log:
 #        log.write("writing html of"+url)
 #        log.write(url)
-    return render(request,'subscribe-view.html',{'html1':html1+"<h9> Click on the links that go to the content you want. The service will highlight what it thinks you want. Deselect the content you do not want or make the selection criteria more general by hitting the up arrow on your keyboard. Subscribe to the highlighted content by clicking the subscribe button.</h1>",'html2':html2,'url':url})
+    return render(request,'subscribe-view.html',{'html1':html1+"<h9> Click on the links that go to the content you want. The service will highlight what it thinks you want. Deselect the content you do not want or make the selection criteria more general by hitting the up arrow on your keyboard. Subscribe to the highlighted content by clicking the subscribe button.</h9>",'html2':html2,'url':url})
 
 
 
