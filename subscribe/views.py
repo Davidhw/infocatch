@@ -32,10 +32,6 @@ def save(request):
     body = json.loads(request.body)
 
     if request.user and not request.user.is_anonymous():
-        with open("RSSlog.txt",'w')as log:
-            log.write(str(body.items()))
-            log.write("in save")
-
         if body['url'][-1]=="/":
             body['url'] = body['url'][:-2]
 
@@ -53,8 +49,6 @@ def save(request):
 #    return redirect("http://127.0.0.1:8000/", permanent=True)
 #    return HttpResponseRedirect(reverse('rssplus:home'))
 #    return HttpResponseRedirect("127.0.0.1:8000")
-    from rssplus.forms import URLForm
-    form = URLForm()
 #    return render('home-view.html',{"subscriptionsString":Subscription.getStringOfAll(),"urlForm":form})
 #    return render('home-view.html',{"subscriptionsString":Subscription.getStringOfAll(),"urlForm":None})
     return redirect('home')
