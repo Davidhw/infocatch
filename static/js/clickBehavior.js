@@ -301,6 +301,23 @@ window.addEventListener("keydown", function(e) {
             console.log("down");
             broadenSimilarNodes(-1)
 	}
+        } else if (e.keyCode == RIGHTARROW){
+	    console.log("right arrow")
+            var http = new XMLHttpRequest();
+            var url = "/subscribe/save";
+	        http.open("POST",url,true);
+            http.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
+
+            var parameters = {
+               "url": "{{url}}",
+               "xpath": similarElementsXpath,
+               "data":"blarg"
+            };
+            console.log(JSON.stringify(parameters));
+	        http.send(JSON.stringify(parameters))
+        
+	    }
+	}
     }
 }, false);
 

@@ -64,13 +64,13 @@ def load_external_page_site_not_specified_in_URL(request):
     from rssplus.forms import URLForm
     try:
         url = URLForm(request.POST).data["siteUrl"]
-        keepJavascript = URLForm(request.POST).data["keepJavascript"]
-        return load_external_page(request,url,keepJavascript)
+#        keepJavascript = URLForm(request.POST).data["keepJavascript"]
+        return load_external_page(request,url)
     except:
         return redirect('home')
     
 
-def load_external_page(request,url,keepJavascript):
+def load_external_page(request,url):
 
     def addHttp(url):
         http = "http://"
@@ -91,7 +91,7 @@ def load_external_page(request,url,keepJavascript):
     html = removeJavascript(browser.page_source)
     browser.quit()
     '''
-    html = getPageSourceWithRunningJavascript(url,keepJavascript = keepJavascript)
+    html = getPageSourceWithRunningJavascript(url)
     # </head> was sometimes getting removed with javascript (?!) so just removing it after split
     split = html.split("</head>")
     if len(split)==2:

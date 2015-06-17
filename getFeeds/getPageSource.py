@@ -5,10 +5,10 @@ from rssplus.settings import BASE_DIR, BASE_URL
 
 def removeJavascript(pageSource,allJavascript=True):
     # just remove the script tags
-    if allJavascript:
-        return re.sub(r'<script.+</script>','',pageSource,flags=re.DOTALL)
-    else:
-        return re.sub(r'<script.+</script>','',pageSource)
+#    if allJavascript:
+    return re.sub(r'<script.+</script>','',pageSource,flags=re.DOTALL)
+#    else:
+ #       return re.sub(r'<script.+</script>','',pageSource)
 #    from django.utils.html import strip_tags                                  
 #    return strip_tags(pageSource)                                             
 #    cleaner = Cleaner()                                                       
@@ -28,14 +28,16 @@ def getPageSourceWithRunningJavascript(link,keepJavascript=0):
     browser.get(link)                                                           
     html = browser.page_source                               
     browser.quit()   
+    return removeJavascript(html)
 
-    if keepJavascript==2:
-        return removeJavascript(html)
+#    if keepJavascript==2:
+
+'''
     elif keepJavascript ==1:
         return removeJavascript(html,allJavascript=False)
     else:
         return html
-
+'''
 def getPageSource(link,timeout=None):
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
     opener.addheaders = [('User-agent', 'Mozilla/5.0 (Windows NT 5.1; rv:10.0.1) Gecko/20100101 Firefox/10.0.1')]
