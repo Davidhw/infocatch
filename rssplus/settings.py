@@ -42,7 +42,8 @@ else:
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = [".herokuapp.com","test1.com"]
+#ALLOWED_HOSTS = [".herokuapp.com","test1.com"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition

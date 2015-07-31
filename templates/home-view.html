@@ -5,8 +5,7 @@ Welcome to InfoCatch, a service that, once a day, sends you an offline-viewable 
 
  {% if user and not user.is_anonymous %}
 
-To begin, enter a url into the box below and click "Load Page". Once you've been taken to the url you entered, click a link that you would open, and then hit the up arrow on your keyboard until all of the links you would consider clicking are highlighted. Then either click subscribe or hit the right arrow on your keyboard. You should only fiddle with the javascript options if you are unable to get the page to open just by entering the url (eg if you want to subscribe to some Google+ page, you will need to select "Some Javascript"). 
-For starters, you could enter this url - news.ycombinator.com
+To begin, enter a url into the box below and click "Load Page". Once you've been taken to the url you entered, click a link that you would open, and then hit the up arrow on your keyboard until all of the links you would consider clicking are highlighted. Then either click subscribe or hit the right arrow on your keyboard. For starters, you could enter this url - news.ycombinator.com
 
 
 <form action="/subscribe/" method="post">{% csrf_token %}
