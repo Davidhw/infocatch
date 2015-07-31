@@ -34,7 +34,7 @@ TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 # SECURITY WARNING: keep the secrte key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 if DEBUG:
     BASE_URL = "test1.com"
 else:
