@@ -178,7 +178,7 @@ def getLinksFromSubscription(sub,browser=None):
 
 #http://twigstechtips.blogspot.com/2012/01/django-send-email-with-attachment.html
 def emailFeed(send_to,message=None,attachment=None,extension=None):
-    if sent_to == "" or sent_to == None:
+    if send_to == "" or send_to == None:
         print "No email address on record for this user, so I can't send them their feed"
         return
 
