@@ -182,6 +182,10 @@ def emailFeed(send_to,message=None,attachment=None,extension=None):
         print "No email address on record for this user, so I can't send them their feed"
         return
 
+    if (message=="" or message==None) and attachment==None:
+        print "nothing to send"
+        return 
+
     email = EmailMessage()
     email.subject = "InfoCatch Feed"
 
