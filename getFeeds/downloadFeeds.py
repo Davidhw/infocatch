@@ -96,45 +96,56 @@ def getBrowser():
     
 
 def getEveryUsersFeeds():        
+    # deliver each users' links to them
+    
+    # get the browser we'll open subscription urls with
     browser = getBrowser()
+
+    # get every user's links from their subscriptions
     for u in User.objects.all():
         links = getSubscriptionLinks(u,browser)
         if len(links) == 0:
             print "No links for this user."
-            pass
         else:
-            settings = UserSettings.objects.get_or_create(user = u,defaults={'email_Feeds_To': u.email,'feed_Format':UserSettings.PDF})[0]
+
+            '''
+            deliver the users links in the manner their settings specify
+            if they haven't specified settings, assume that they want
+            just want stuff emaild to their login account's email
+            with the delivery format being a list of links
+            '''
+            settings = UserSettings.objects.get_or_create(user = u,defaults={'email_Feeds_To': u.email,'feed_Format':UserSettings.EMAIL_LINKS_BATCH})[0]
             format = settings.feed_Format
+
             if format ==UserSettings.PDF:
+                # we run out of memory issues sometimes when creating a large pdf, so split it into multiple pdfs
                 linkGroupSize = 10
                 if len(links)> linkGroupSize:
                     linkGroups = [links[i*linkGroupSize:(i+1)*linkGroupSize] for i in range(len(links)/linkGroupSize)]
                     for linkGroup in linkGroups:
-                        emailFeed(settings.email_Feeds_To,attachment=getPDFOfLinks(linkGroup),extension="pdf")
+                        emailFeed(settings.getEmail(),attachment=getPDFOfLinks(linkGroup),extension="pdf")
                 else:
-                    emailFeed(settings.email_Feeds_To,attachment=getPDFOfLinks(links),extension="pdf")
-    #            attachment = getPDFOfLinks(links)
-    #            extension = "pdf"
+                    emailFeed(settings.getEmail(),attachment=getPDFOfLinks(links),extension="pdf")
                 
-            elif format =='e':
-                pass
             elif format == UserSettings.EMAIL_LINKS_BATCH:
                 # email the links all at once, space delimited
-                emailFeed(settings.email_Feeds_To,message=reduce(lambda x,y: x+ ' '+y, links))
+                emailFeed(settings.getEmail(),message=reduce(lambda x,y: x+ ' '+y, links))
+
             elif format == UserSettings.EMAIL_LINKS_INDIVIDUALLY:
                 # email the links one at a time
                 for link in links:
-                    emailFeed(settings.email_Feeds_To,message=link)
+                    emailFeed(settings.getEmail(),message=link)
+
             elif format == UserSettings.JUST_RSS:
+                # the rss feed is created upon a call to the rss view so we don't need to do anything here
                 pass
 
     browser.quit()
     
 
-#        emailFeed(settings.email,attachment,extension)
-
-
 def getLinksFromSubscription(sub,browser=None):
+    # if we're given a browser use it and don't close it at the end 
+    # otherwise, start one and close it when we're done
     quitBrowser = False
     if browser == None:
         browser = getBrowser()
@@ -142,7 +153,8 @@ def getLinksFromSubscription(sub,browser=None):
 
     subscriptionLinks = SubscriptionLinks.objects.get_or_create(subscription = sub)[0]
     todaysDate = datetime.date.today() 
-    # if we've already determined todays links, just return them
+
+    # if we've already determined todays links for this subscription, just return them
     if subscriptionLinks.date == todaysDate:
         return subscriptionLinks.getLinks()
 
@@ -160,11 +172,16 @@ def getLinksFromSubscription(sub,browser=None):
 
         if quitBrowser:
             browser.quit()
+
         return newLinks
 
 
 #http://twigstechtips.blogspot.com/2012/01/django-send-email-with-attachment.html
 def emailFeed(send_to,message=None,attachment=None,extension=None):
+    if sent_to == "" or sent_to == None:
+        print "No email address on record for this user, so I can't send them their feed"
+        return
+
     email = EmailMessage()
     email.subject = "InfoCatch Feed"
 

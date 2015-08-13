@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class UserSettings(models.Model):
+    def getEmail(self):
+        if email_Feeds_To =="":
+            return self.user.email
+
     user = models.OneToOneField(User,primary_key=True)
     email_Feeds_To = models.CharField(max_length=100)
     PDF = "p"
