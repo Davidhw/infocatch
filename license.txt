@@ -1,4 +1,4 @@
-Software License Agreement (Simplified BSD License)
+Software License Agreement (BSD License)
 http://choosealicense.com/licenses/bsd-2-clause/
 
 Copyright (c) 2015, Davidhw
@@ -29,7 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 Also, Infocatch thanks the Firebug project for providing the getElementTreeXPath 
-function. This is probably redundant because the Firebug project uses the same 
+function. This is probably redundant because the Firebug project uses almost the same 
 license as Infocatch (well, vice versa), but below I'm just going to copy and 
 paste Firebug's license.
 
