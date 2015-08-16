@@ -19,8 +19,8 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'davidhweinstein@gmail.com'
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_PREFLIGHT_MAX_AGE = 86400000000
+#CORS_ORIGIN_ALLOW_ALL = True
+#CORS_PREFLIGHT_MAX_AGE = 86400000000
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
@@ -102,8 +102,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 #    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware', 
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+#    'corsheaders.middleware.CorsMiddleware',
+#    'django.middleware.common.CommonMiddleware',
 )
 
 ROOT_URLCONF = 'rssplus.urls'
