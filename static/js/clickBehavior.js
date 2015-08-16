@@ -63,13 +63,10 @@ overRideScroll = function(){
 
 
 restrictXPath = function(broadXPath,chosenXPath,removedXPath){
-    console.log("In Restrict xpath");
-    console.log(broadXPath);
-    console.log(chosenXPath);
-    console.log(removedXPath);
     var broadList = broadXPath.split('/');
     var chosenList = chosenXPath.split('/');
     var removedList = removedXPath.split('/');
+
     for (var i = chosenList.length - 1; i> -1; i--){
         if (removedList[i] != chosenList[i]){
             broadList[i]= chosenList[i];
@@ -78,7 +75,6 @@ restrictXPath = function(broadXPath,chosenXPath,removedXPath){
             return broadList.join('/');
         }
     }
-    console.log("No difference found in restrict xpath?");
 }
 
 isAlreadyBroadened = function(xpath){
@@ -120,18 +116,17 @@ countHowBroadened = function(xpath){
 }
 
 broadenXPath = function(xpath,amountToBroaden) {
-    // grab the last part of the xpath and subtract it from the working xpath before starting
-    // we do this beacuse we don't want to replace the last part with an asterisk
-    console.log(xpath);
-   // var partAfterLastSlash = xpath.slice(xpath.lastIndexOf('/'),xpath.length+1);
+    // broadening refers to replacing parts of an xpath with *, which accepts anything
+
+    // grab the last two parts of the xpath and subtract it from the part of the xpath that will be modified before starting
+    // we do this because we don't want to replace the two parts with asterisks
     var secondToLastSlashIndex = xpath.slice(0,xpath.lastIndexOf('/')).lastIndexOf('/');
     var partAfterSecondToLastSlash = xpath.slice(secondToLastSlashIndex,xpath.length+1);
-    console.log("part after second to last slash");
-    console.log(partAfterSecondToLastSlash);
     xpath = xpath.slice(0, secondToLastSlashIndex);
 
-    // /html/body/center/table/tbody/tr[3]/td/table/tbody/tr[10]/td[3]/a to
-    // /html/body/center/table/tbody/tr[3]/td/table/tbody/tr[10]/*/a
+    // if the xpath has already gone through this process
+    // broaden by the amount this function was called to broaden by
+    // plus the amount it's already been broadened by
     if (amountToBroaden > 0) {
         if (isAlreadyBroadened(xpath)){
             var howBroadened = countHowBroadened(xpath);
@@ -141,12 +136,17 @@ broadenXPath = function(xpath,amountToBroaden) {
             }
         }
 
-        // iteratively replace the path with asterisks
+	// build up a string of asterisks to replace part of the xpath with
+	// simultaneously, shave off the part of the xpath those asterisks will replace
         var asterisks = "";
         for (var i = 0; i < amountToBroaden; i++) {
             xpath = xpath.slice(0, xpath.lastIndexOf('/'));
             asterisks +="/*";
         }
+
+	// the final xpath is whatever part wasn't shaved off
+	// plus the /*s replacing the shaved off part
+	// plus the last two parts of the xpath that were saved earlier
         xpath = xpath + asterisks + partAfterSecondToLastSlash;
     }
     return xpath;
@@ -203,48 +203,52 @@ getElementsByXPath = function(doc, xpath) {
     return nodes;
 };
 
+// function that is called when the user clicks a link
 clickBehavior = function(){
     try {
-    // if this is the first time they select something, make it main selection
+	// if this is the first time they select something, make it main selection
 	if (initialChoiceMade === false) {
+	    // store that they've selected, what they selected, and where it is
 	    initialChoice = this;
 	    initialChoiceMade = true;
-	    console.log("is the button enabled?");
-            document.getElementById("subscribeButton").disabled = false;
-	    console.log(document.getElementById("subscribeButton").disabled);
-
-    //this.style.backgroundColor = "#FDFF47";
-    //var similarElements = [].slice.call(this.parentNode.childNodes);
 	    initialChoiceXpath = getElementTreeXPath(this);
-	    console.log("Initial choice xpath: ", initialChoiceXpath);
-    //var similarElements = getParent(initialChoiceXpath);
-	    console.log(getElementTreeXPath(this));
+
+	    // find the similarly located links and highlight them
 	    similarElementsXpath = broadenXPath(getElementTreeXPath(this),broadenBy);
-	    console.log(similarElementsXpath);
 	    similarElements = getElementsByXPath(initialChoice.ownerDocument, similarElementsXpath);
-    //var similarElements = getElementsByXPath(initialChoice.ownerDocument, getElementTreeXPath(this));
 	    highLight(similarElements,YELLOW);
-    //  for (var similarElementsIndex = 0; similarElementsIndex < similarElements.length; similarElementsIndex++) {
-    //      similarElements[similarElementsIndex].style.backgroundColor = "#FDFF47";
-    //  }
+
+	    // make the subscribe button clickable
+            document.getElementById("subscribeButton").disabled = false;
+
 	} else {
-        // if they reselect their initial selection, reset everything
+            // if they reselected their initial selection, reset everything
             if (this === initialChoice) {
 		clear()
-        // otherwise, add their new choice to the list of unchosen things and highlight it in green (for now, later we'll be unhighlighting them)
+	    
+            // otherwise, unhighlight their choice and adjust the xpath to remove their selection
             } else {
-		similarElementsXpath = restrictXPath(similarElementsXpath,initialChoiceXpath, getElementTreeXPath(this));
 		highLight(similarElements,"transparent");
-            //this.style.backgroundColor = GREEN;
+
+		similarElementsXpath = restrictXPath(similarElementsXpath,initialChoiceXpath, getElementTreeXPath(this));
 		similarElements = getElementsByXPath(initialChoice.ownerDocument,similarElementsXpath);
+
+		// rehighlight those similar links that weren't removed
 		highLight(similarElements,YELLOW);
+
+		// add the selected element to the list of removed links
 		unchosen.push(this);
 	    }
 	}
+	// don't actually go to the link that was clicked
 	return false;
+
     } catch(e) {
+	// if something went wrong, tell me what
         console.log(e.message);
+
     }finally {
+	// definately don't go to the clicked link
         return false;
     }
 };
@@ -254,9 +258,12 @@ getElementTreeXPath = function(element)
     var paths = [];
 
             // Use nodeName (instead of localName) so namespace prefix is included (if any).
+    //start with element and work up tree
     for (; element && element.nodeType == 1; element = element.parentNode)
     {
+	//index identifies which child of element's parent element is
         var index = 0;
+	// count backwards from element to previous siblings to count how many older siblings element has
         for (var sibling = element.previousSibling; sibling; sibling = sibling.previousSibling)
         {
             // Ignore document type declaration.
@@ -268,8 +275,10 @@ getElementTreeXPath = function(element)
         }
 
         var tagName = element.nodeName.toLowerCase();
+
+	// changing indexing to include [0] index
+        //var pathIndex = (index ? "[" + (index+1) + "]" : "");
         var pathIndex = "[" + (index+1) + "]";
-            //var pathIndex = (index ? "[" + (index+1) + "]" : "");
         paths.splice(0, 0, tagName + pathIndex);
     }
 
@@ -305,11 +314,10 @@ window.addEventListener("keydown", function(e) {
             var http = new XMLHttpRequest();
             var url = "/subscribe/save";
 	        http.open("POST",url,true);
-            http.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
-	    http.onreadystatechange = function()
-	    {
+            http.setRequestHeader("x-csrftoken", CSRF_TOKEN);
+	    http.onreadystatechange = function(){
 		if (http.readyState==4 && http.status==200){
-		document.location.href = '../'
+		   document.location.href = '../'
 		}
 	    }
 
