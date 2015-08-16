@@ -20,6 +20,7 @@ EMAIL_HOST_USER = 'davidhweinstein@gmail.com'
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_PREFLIGHT_MAX_AGE = 86400000000
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
