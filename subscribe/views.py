@@ -67,6 +67,7 @@ def load_external_page_site_not_specified_in_URL(request):
 def load_external_page(request,url):
 
     def addHttp(url):
+        '''
         http = "http://"
         if url[:7]==http:
                 pass
@@ -75,7 +76,17 @@ def load_external_page(request,url):
         else:
                 url = http+url
         return url
-    
+        '''
+        https = "https://"
+        if url[:8]==https:
+                pass
+        elif url[:7] == "http://":
+                url = https+url[7:]
+        else:
+                url = https+url
+        return url
+
+
     url = addHttp(url)
 #    html = urllib2.urlopen(url).read()
     '''
