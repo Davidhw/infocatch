@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'userSettings',
     'social.apps.django_app.default',
     'getFeeds',
+    'corsheaders',
 #    'django_extensions',
 #    'werkzeug',
 )
@@ -100,6 +101,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 #    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware', 
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 )
 
 ROOT_URLCONF = 'rssplus.urls'
