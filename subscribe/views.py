@@ -14,6 +14,7 @@ import re
 from getFeeds.getPageSource import getPageSourceWithRunningJavascript,removeJavascript
 from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse_lazy
+from django.views.decorators.csrf import csrf_exempt
 
 
 class DeleteUserSubPairView(ListView):
@@ -28,6 +29,8 @@ class DeleteUserSubPairView(ListView):
     
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+@csrf_exempt
 def save(request):
     body = json.loads(request.body)
 
