@@ -35,17 +35,23 @@ def save(request):
     body = json.loads(request.body)
 
     if request.user and not request.user.is_anonymous():
+        print body['url']
         if body['url'][-1]=="/":
             body['url'] = body['url'][:-2]
+            print body['url']
+
+        print body['xpath']
 
         # if the feed doesn't exst yet, make it
         subscription,subscriptionCreated = Subscription.objects.get_or_create(url = body['url'],xpath=body['xpath'])
         if subscriptionCreated:
+            print "subscription created"
             subscription.save()
 
         # if the current user hasn't subscribed to that feed yet, subscribe them
         subscriptionUserPairing,pairingCreated = SubscriptionUserPairing.objects.get_or_create(user = request.user,subscription=subscription)
         if pairingCreated:
+            print "subscription user pairing created"
             subscriptionUserPairing.save()
 
 #    return load_external_page(request,url)
