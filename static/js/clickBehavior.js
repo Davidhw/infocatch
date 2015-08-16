@@ -312,7 +312,7 @@ window.addEventListener("keydown", function(e) {
         } else if (e.keyCode == RIGHTARROW){
 	    console.log("right arrow")
             var http = new XMLHttpRequest();
-            var url = "http://infocatch.herokuapp.com/subscribe/save";
+            var url = "http://infocatch.herokuapp.com/subscribe/save/";
 	        http.open("POST",url,true);
             http.setRequestHeader("x-csrftoken", CSRF_TOKEN);
 	    http.onreadystatechange = function(){
