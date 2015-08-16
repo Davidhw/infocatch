@@ -19,7 +19,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'davidhweinstein@gmail.com'
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 
-
+CORS_ORIGIN_ALLOW_ALL = True
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
