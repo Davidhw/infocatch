@@ -6,7 +6,7 @@ class UserSettings(models.Model):
         if self.email_Feeds_To =="":
             return self.user.email
         else:
-            return email_Feeds_To
+            return self.email_Feeds_To
 
     user = models.OneToOneField(User,primary_key=True)
     email_Feeds_To = models.CharField(max_length=100)
