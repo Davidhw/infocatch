@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-Welcome to InfoCatch, a service that, once a day, sends you an offline-viewable collection of the web content you've expressed interest in.
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
 
- {% if user and not user.is_anonymous %}
 
-To begin, enter a url into the box below and click "Load Page". Once you've been taken to the url you entered, click a link that you would open, and then hit the up arrow on your keyboard until all of the links you would consider clicking are highlighted. Then either click subscribe or hit the right arrow on your keyboard. For starters, you could enter this url - news.ycombinator.com
+{% if user and not user.is_anonymous %}
 
+Enter a URL to a website you would like to subscribe to.
 
 <form action="/subscribe/" method="post">{% csrf_token %}
     {{ urlForm }}
@@ -14,9 +15,6 @@ To begin, enter a url into the box below and click "Load Page". Once you've been
 </form>
 
 <br>
-
-
- <!--{{subscriptionsString|safe}}-->
 
 {% if subscriptionUserPairList %}
 Subscriptions:
@@ -35,9 +33,33 @@ Subscriptions:
    You are not subscribed to anything.
 {% endif %}
 
-{% else %}
-<br>
-To begin, please login. 
+   {% else %}
+
+<div class="s", style="width: 700px;">
+  <div> <img src="/static/images/step_0.png"/> <center> <h3>Specify A URL </h3></center></div>
+  <div> <img src="/static/images/step_1.png"/> <center> <h3> Click a Link</h3> </center> </div>
+  <div> <img src="/static/images/step_2.png"/> <center> <h5> If Needed, Click "Generalize Selection or the Up Arrow. Then Click "Subscribe" or the Right Arrow </h3> </center> </div>
+  <div> <img src="/static/images/step_3.png"/> <center> <h3> Recieve PDFs of Linked Content </h3> </center> </div>
+  <div> <img src="/static/images/step_4.png"/> <center> <h4> Or Recieve Emails of Link Lists That That You Can Automatically Forward To Instapaper </h3> </center> </div>
+</div>
+
+<style>
+  .slick-prev:before, .slick-next:before {
+  color:black;  
+  }
+
+</style>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+      $('.s').slick({
+          dots: true,
+  infinite: true,
+
+      });
+  });
+</script>
+
 
 {% endif %}
 

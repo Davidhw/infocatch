@@ -57,7 +57,7 @@ def getPDFOfLinks(links):
 
 
     toc = {
-    'toc-header-text':"Table Of Contents!"
+    'toc-header-text':"Table Of Contents"
     }
 
     config = pdfkit.configuration(wkhtmltopdf= "/app/bin/wkhtmltopdf")

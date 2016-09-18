@@ -12,18 +12,11 @@ var RIGHTARROW = 39;
 var broadenBy = 2;
 var lastScrollLevel = 0;
 
-/*var getXPathButton= document.createElement('input');
-getXPathButton.setAttribute('type','button');
-getXPathButton.onClick = function(){
-    console.log("clicked");
-    alert(similarElementsXpath);
- document.getElementById('getXPathButton').appendChild(getXPathButton);
-
- }*/
-
 clear = function(){
     document.getElementById("subscribeButton").disabled = true;
-    highLight(similarElements,"transparent");
+    document.getElementById("resetButton").disabled = true;
+    document.getElementById("generalizeButton").disabled = true; 
+    highLight(similarElements,"inherit");
     initialChoiceMade = false;
     initialChoiceXpath = "";
     similarElementsXpath = "";
@@ -33,40 +26,20 @@ clear = function(){
 }
 
 broadenSimilarNodes = function(amountToBroaden){
-    console.log("It is");
-    console.log(similarElementsXpath);
+    highLight(similarElements, "inherit");
     similarElementsXpath = broadenXPath(similarElementsXpath,amountToBroaden);
-    console.log("now is");
-    console.log(similarElementsXpath);
     similarElements = getElementsByXPath(initialChoice.ownerDocument, similarElementsXpath);
     highLight(similarElements,YELLOW);
 }
 
-overRideScroll = function(){
-    console.log("In overRideScroll");
-    if (initialChoiceMade==true){
-        var newScrollLevel = $(this).scrollTop();
-        var delta = 0;
-        // but what happens if the make isn't big enough to scroll on?
-        if (newScrollLevel>lastScrollLevel){
-            //broaden
-            delta = 1;
-        } else {
-            if (newScrollLevel < lastScrollLevel) {
-                delta = -1;
-            }
-        }
-        broadenSimilarNodes(delta);
-        lastScrollLevel = newScrollLevel;
-    }
-}
-
-
 restrictXPath = function(broadXPath,chosenXPath,removedXPath){
+    console.log("In Restrict xpath");
+    console.log(broadXPath);
+    console.log(chosenXPath);
+    console.log(removedXPath);
     var broadList = broadXPath.split('/');
     var chosenList = chosenXPath.split('/');
     var removedList = removedXPath.split('/');
-
     for (var i = chosenList.length - 1; i> -1; i--){
         if (removedList[i] != chosenList[i]){
             broadList[i]= chosenList[i];
@@ -75,6 +48,7 @@ restrictXPath = function(broadXPath,chosenXPath,removedXPath){
             return broadList.join('/');
         }
     }
+    console.log("No difference found in restrict xpath?");
 }
 
 isAlreadyBroadened = function(xpath){
@@ -116,17 +90,18 @@ countHowBroadened = function(xpath){
 }
 
 broadenXPath = function(xpath,amountToBroaden) {
-    // broadening refers to replacing parts of an xpath with *, which accepts anything
-
-    // grab the last two parts of the xpath and subtract it from the part of the xpath that will be modified before starting
-    // we do this because we don't want to replace the two parts with asterisks
+    // grab the last part of the xpath and subtract it from the working xpath before starting
+    // we do this beacuse we don't want to replace the last part with an asterisk
+    console.log(xpath);
+   // var partAfterLastSlash = xpath.slice(xpath.lastIndexOf('/'),xpath.length+1);
     var secondToLastSlashIndex = xpath.slice(0,xpath.lastIndexOf('/')).lastIndexOf('/');
     var partAfterSecondToLastSlash = xpath.slice(secondToLastSlashIndex,xpath.length+1);
+    console.log("part after second to last slash");
+    console.log(partAfterSecondToLastSlash);
     xpath = xpath.slice(0, secondToLastSlashIndex);
 
-    // if the xpath has already gone through this process
-    // broaden by the amount this function was called to broaden by
-    // plus the amount it's already been broadened by
+    // /html/body/center/table/tbody/tr[3]/td/table/tbody/tr[10]/td[3]/a to
+    // /html/body/center/table/tbody/tr[3]/td/table/tbody/tr[10]/*/a
     if (amountToBroaden > 0) {
         if (isAlreadyBroadened(xpath)){
             var howBroadened = countHowBroadened(xpath);
@@ -136,50 +111,17 @@ broadenXPath = function(xpath,amountToBroaden) {
             }
         }
 
-	// build up a string of asterisks to replace part of the xpath with
-	// simultaneously, shave off the part of the xpath those asterisks will replace
+        // iteratively replace the path with asterisks
         var asterisks = "";
         for (var i = 0; i < amountToBroaden; i++) {
             xpath = xpath.slice(0, xpath.lastIndexOf('/'));
             asterisks +="/*";
         }
-
-	// the final xpath is whatever part wasn't shaved off
-	// plus the /*s replacing the shaved off part
-	// plus the last two parts of the xpath that were saved earlier
         xpath = xpath + asterisks + partAfterSecondToLastSlash;
     }
     return xpath;
 }
 
-      /*  var lastSlashIndex = xpath.lastIndexOf('/');
-        if (lastSlashIndex != -1) {
-            var secondToLastSlashIndex = xpath.substr(0, lastSlashIndex).lastIndexOf(('/'));
-            console.log(xpath.substr(0,lastSlashIndex));
-            if (secondToLastSlashIndex != -1) {
-                return broadenXPath(xpath.substr(0, secondToLastSlashIndex + 1), amountToBroaden - 1) + "*" + xpath.substr(lastSlashIndex);
-		}
-		}
-    return xpath;
-    }*/
-    // var p2 = p1.substr(0,p1.lastIndexOf('/'));
-    //alert(p2);
-
-/*
-getParent = function(xpath){
-    var parentXpath = getXpathParent(xpath);
-    var parents = [];
-
-    while (parentXpath!= '' && parents.length==0 ){
-    console.log("parent xpath is "+parentXpath);
-    parentXpath = getXpathParent(parentXpath);
-    console.log("now trying "+parentXpath);
-    parents = getElementsByXPath(parentXpath+'/*');
-    console.log("number of parents "+parents.length);
-    }
-    return parents;
-    }
-*/
 highLight = function(nodes,color){
     for (var nodeIndex = 0; nodeIndex < similarElements.length; nodeIndex++) {
         nodes[nodeIndex].style.backgroundColor = color;
@@ -203,52 +145,43 @@ getElementsByXPath = function(doc, xpath) {
     return nodes;
 };
 
-// function that is called when the user clicks a link
 clickBehavior = function(){
     try {
-	// if this is the first time they select something, make it main selection
+    // if this is the first time they select something, make it main selection
 	if (initialChoiceMade === false) {
-	    // store that they've selected, what they selected, and where it is
+            document.getElementById("subscribeButton").disabled = false;
+	    document.getElementById("resetButton").disabled = false;
+	    document.getElementById("generalizeButton").disabled = false; 
 	    initialChoice = this;
 	    initialChoiceMade = true;
-	    initialChoiceXpath = getElementTreeXPath(this);
 
-	    // find the similarly located links and highlight them
+	    initialChoiceXpath = getElementTreeXPath(this);
+	    console.log("Initial choice xpath: ", initialChoiceXpath);
+
+	    console.log(getElementTreeXPath(this));
 	    similarElementsXpath = broadenXPath(getElementTreeXPath(this),broadenBy);
+	    console.log(similarElementsXpath);
 	    similarElements = getElementsByXPath(initialChoice.ownerDocument, similarElementsXpath);
+
 	    highLight(similarElements,YELLOW);
 
-	    // make the subscribe button clickable
-            document.getElementById("subscribeButton").disabled = false;
-
 	} else {
-            // if they reselected their initial selection, reset everything
+            // if they reselect their initial selection, reset everything
             if (this === initialChoice) {
 		clear()
-	    
-            // otherwise, unhighlight their choice and adjust the xpath to remove their selection
+            // otherwise, remove the element they selected from the selected elements
             } else {
-		highLight(similarElements,"transparent");
-
 		similarElementsXpath = restrictXPath(similarElementsXpath,initialChoiceXpath, getElementTreeXPath(this));
+		highLight(similarElements,"inherit");
 		similarElements = getElementsByXPath(initialChoice.ownerDocument,similarElementsXpath);
-
-		// rehighlight those similar links that weren't removed
 		highLight(similarElements,YELLOW);
-
-		// add the selected element to the list of removed links
 		unchosen.push(this);
 	    }
 	}
-	// don't actually go to the link that was clicked
 	return false;
-
     } catch(e) {
-	// if something went wrong, tell me what
         console.log(e.message);
-
     }finally {
-	// definately don't go to the clicked link
         return false;
     }
 };
@@ -258,12 +191,9 @@ getElementTreeXPath = function(element)
     var paths = [];
 
             // Use nodeName (instead of localName) so namespace prefix is included (if any).
-    //start with element and work up tree
     for (; element && element.nodeType == 1; element = element.parentNode)
     {
-	//index identifies which child of element's parent element is
         var index = 0;
-	// count backwards from element to previous siblings to count how many older siblings element has
         for (var sibling = element.previousSibling; sibling; sibling = sibling.previousSibling)
         {
             // Ignore document type declaration.
@@ -275,10 +205,8 @@ getElementTreeXPath = function(element)
         }
 
         var tagName = element.nodeName.toLowerCase();
-
-	// changing indexing to include [0] index
-        //var pathIndex = (index ? "[" + (index+1) + "]" : "");
         var pathIndex = "[" + (index+1) + "]";
+            //var pathIndex = (index ? "[" + (index+1) + "]" : "");
         paths.splice(0, 0, tagName + pathIndex);
     }
 
@@ -286,10 +214,6 @@ getElementTreeXPath = function(element)
 };
 
 window.onload =  function() {
-  //  $(window).scroll(overRideScroll);
- /*   $(window).scroll(function() {
-        $(this).scrollTop(0);
-	})*/
     var anchors = document.getElementsByTagName("a");
     for (var linkIndex = 0; linkIndex < anchors.length; linkIndex++) {
         anchors[linkIndex].onclick = clickBehavior;
@@ -312,12 +236,13 @@ window.addEventListener("keydown", function(e) {
         } else if (e.keyCode == RIGHTARROW){
 	    console.log("right arrow")
             var http = new XMLHttpRequest();
-            var url = "http://infocatch.herokuapp.com/subscribe/save/";
+            var url = "/subscribe/save";
 	        http.open("POST",url,true);
-            http.setRequestHeader("x-csrftoken", CSRF_TOKEN);
-	    http.onreadystatechange = function(){
+            http.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
+	    http.onreadystatechange = function()
+	    {
 		if (http.readyState==4 && http.status==200){
-		   document.location.href = '../'
+		document.location.href = '../'
 		}
 	    }
 

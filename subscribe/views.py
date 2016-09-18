@@ -14,7 +14,6 @@ import re
 from getFeeds.getPageSource import getPageSourceWithRunningJavascript,removeJavascript
 from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse_lazy
-from django.views.decorators.csrf import csrf_exempt
 
 
 class DeleteUserSubPairView(ListView):
@@ -29,37 +28,23 @@ class DeleteUserSubPairView(ListView):
     
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-
-@csrf_exempt
 def save(request):
     body = json.loads(request.body)
 
     if request.user and not request.user.is_anonymous():
-        print body['url']
         if body['url'][-1]=="/":
             body['url'] = body['url'][:-2]
-            print body['url']
-
-        print body['xpath']
 
         # if the feed doesn't exst yet, make it
         subscription,subscriptionCreated = Subscription.objects.get_or_create(url = body['url'],xpath=body['xpath'])
         if subscriptionCreated:
-            print "subscription created"
             subscription.save()
 
         # if the current user hasn't subscribed to that feed yet, subscribe them
         subscriptionUserPairing,pairingCreated = SubscriptionUserPairing.objects.get_or_create(user = request.user,subscription=subscription)
         if pairingCreated:
-            print "subscription user pairing created"
             subscriptionUserPairing.save()
 
-#    return load_external_page(request,url)
-#    return redirect("http://127.0.0.1:8000/", permanent=True)
-#    return HttpResponseRedirect(reverse('rssplus:home'))
-#    return HttpResponseRedirect("127.0.0.1:8000")
-#    return render('home-view.html',{"subscriptionsString":Subscription.getStringOfAll(),"urlForm":form})
-#    return render('home-view.html',{"subscriptionsString":Subscription.getStringOfAll(),"urlForm":None})
     return redirect('home')
 
 
@@ -67,7 +52,6 @@ def load_external_page_site_not_specified_in_URL(request):
     from rssplus.forms import URLForm
     try:
         url = URLForm(request.POST).data["siteUrl"]
-#        keepJavascript = URLForm(request.POST).data["keepJavascript"]
         return load_external_page(request,url)
     except:
         return redirect('home')
@@ -76,7 +60,6 @@ def load_external_page_site_not_specified_in_URL(request):
 def load_external_page(request,url):
 
     def addHttp(url):
-        '''
         http = "http://"
         if url[:7]==http:
                 pass
@@ -85,17 +68,7 @@ def load_external_page(request,url):
         else:
                 url = http+url
         return url
-        '''
-        https = "https://"
-        if url[:8]==https:
-                pass
-        elif url[:7] == "http://":
-                url = https+url[7:]
-        else:
-                url = https+url
-        return url
-
-
+    
     url = addHttp(url)
 #    html = urllib2.urlopen(url).read()
     '''
@@ -119,15 +92,7 @@ def load_external_page(request,url):
     # we don't worry about html2, because the base has to be set in the header tag
     html1 = re.sub(r'<base href.*>','<base href = "'+BASE_URL+'">',html1)
 
-#    html1 = html.split("/head>")[0]
-#    html2 = html.split("/head>")[1]
-#    html = "<h1 hi />"
-#    return render(request,'subscribe-view.html')
-#    return render(request,'subscribe-view.html',{'html':html,'url':url},dirs = (PROJECT_ROOT+"/subscribe/templates/subscribe/",PROJECT_ROOT+"subscribe/templates/"))
-#    with open("RSSlog.txt",'w') as log:
-#        log.write("writing html of"+url)
-#        log.write(url)
-    return render(request,'subscribe-view.html',{'html1':html1+"<h3> Click on the links that go to the content you want. The service will highlight what it thinks you want. Deselect the content you do not want or make the selection criteria more general by hitting the up arrow on your keyboard. Subscribe to the highlighted content by clicking the subscribe button.</h3>",'html2':html2,'url':url})
+    return render(request,'subscribe-view.html',{'html1':html1,'html2':html2,'url':url})
 
 
 
