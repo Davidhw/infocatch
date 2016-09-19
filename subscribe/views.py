@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
 import json
 import sys
 import os
@@ -28,6 +29,8 @@ class DeleteUserSubPairView(ListView):
     
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+@csrf_exempt
 def save(request):
     body = json.loads(request.body)
 
