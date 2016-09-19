@@ -14,11 +14,12 @@
             http.open("POST",url,true);
             http.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
             http.onreadystatechange = function(){
-                if (http.readyState==4 && (http.status==200 || http.status==302)){
+                if (http.readyState==4){
                    document.location.href = '../'
                 }
                 console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 console.log(http.status);
+                console.log(http.readyState);
   
             }
 
