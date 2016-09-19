@@ -4,7 +4,7 @@ import datetime
 import simplejson
 
 class Subscription(models.Model):
-    url = models.CharField(max_length=100)
+    url = models.CharField(max_length=300)
     xpath = models.CharField(max_length=500)
 
     def __str__(self):
