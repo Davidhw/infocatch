@@ -5,7 +5,7 @@ import simplejson
 
 class Subscription(models.Model):
     url = models.CharField(max_length=100)
-    xpath = models.CharField(max_length=100)
+    xpath = models.CharField(max_length=500)
 
     def __str__(self):
         return self.url + ": "+self.xpath
