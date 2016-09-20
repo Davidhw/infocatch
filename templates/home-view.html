@@ -7,7 +7,7 @@
 
 {% if user and not user.is_anonymous %}
 
-Enter a URL to a website you would like to subscribe to.
+Enter the URL of a website you would like to subscribe to.
 
 <form action="/subscribe/" method="post">{% csrf_token %}
     {{ urlForm }}
